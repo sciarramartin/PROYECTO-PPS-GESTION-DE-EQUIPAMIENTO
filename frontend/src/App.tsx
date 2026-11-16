@@ -54,12 +54,16 @@ export const App: React.FC = () => {
     setActiveTab('equipos');
   };
 
-  const handleSelectService = (_depositoId: number) => {
+  const handleSelectService = (depositoId: number) => {
+    const svc = summary?.desglose_por_servicio.find(s => s.deposito_id === depositoId);
+    if (svc) {
+      setSearchQuery(svc.nombre_servicio);
+    }
     setActiveTab('equipos');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cpvs-ice font-sans">
+    <div className="min-h-screen flex flex-col bg-[#f4f7ff] font-sans antialiased">
       {/* Barra de Navegación Institucional CPVS */}
       <Navbar
         activeTab={activeTab}
@@ -70,38 +74,43 @@ export const App: React.FC = () => {
       />
 
       {/* Contenido Principal */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Banner de Bienvenida y Acciones de Cabecera */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-cpvs">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+        {/* Encabezado de Página Editorial */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-1">
           <div>
-            <span className="text-[11px] font-bold text-cpvs-cyan tracking-wider uppercase">
-              Día 1 de PPS • Período 16/11/2026 al 18/01/2027
-            </span>
-            <h1 className="text-lg font-bold text-slate-900 leading-tight">
-              Control de Stock y Trazabilidad en Tiempo Real
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-cpvs-blue tracking-wider uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/80">
+                Clínica Privada Vélez Sarsfield
+              </span>
+              <span className="text-xs text-slate-300">•</span>
+              <span className="text-xs text-slate-500 font-medium">
+                Gestión Centralizada
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
+              {activeTab === 'dashboard' ? 'Tablero General de Control' :
+               activeTab === 'equipos' ? 'Inventario de Equipamiento Biomédico' :
+               'Catálogo Unificado de Destinos y Camas'}
             </h1>
-            <p className="text-xs text-slate-500">
-              Gestión centralizada para Alejandra y Supervisión de Guardia 24/7.
-            </p>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <button
               onClick={loadData}
               disabled={loading}
-              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded flex items-center gap-1.5 transition-colors border border-slate-300"
-              title="Actualizar datos en vivo"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-50 hover:text-cpvs-blue transition-all shadow-2xs active:scale-95 cursor-pointer"
+              title="Sincronizar datos con la base de datos"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cpvs-blue' : ''}`} />
-              <span>Actualizar</span>
+              <span>Sincronizar</span>
             </button>
           </div>
         </div>
 
         {/* Notificación de Error si la API no responde */}
         {error && (
-          <div className="p-4 bg-red-50 border-l-4 border-l-cpvs-danger rounded text-xs text-red-800 flex items-start gap-2 shadow-xs">
-            <AlertCircle className="w-4 h-4 text-cpvs-danger shrink-0 mt-0.5" />
+          <div className="p-4 bg-rose-50 border-l-4 border-l-rose-500 rounded-xl text-xs text-rose-800 flex items-start gap-2 shadow-xs">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <div>
               <p className="font-bold">Error de Conexión:</p>
               <p>{error}</p>
@@ -121,17 +130,6 @@ export const App: React.FC = () => {
               services={summary?.desglose_por_servicio || []} 
               onSelectService={handleSelectService}
             />
-
-            {/* Vista Rápida del Inventario */}
-            <div className="pt-2">
-              <EquipmentTable
-                equipment={equipment}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
-            </div>
           </div>
         )}
 

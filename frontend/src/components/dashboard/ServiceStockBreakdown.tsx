@@ -1,7 +1,6 @@
-import React from 'react';
-import { Building, Syringe, Wind } from 'lucide-react';
+import React, { useState } from 'react';
+import { Building, MapPin, ArrowRight, ShieldAlert, CheckCircle2, BedDouble, Wrench, Search } from 'lucide-react';
 import { ServiceStockBreakdown } from '../../types';
-import { Tooltip } from '../common/Tooltip';
 
 interface ServiceStockBreakdownProps {
   services: ServiceStockBreakdown[];
@@ -12,111 +11,153 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
   services,
   onSelectService
 }) => {
+  const [filterText, setFilterText] = useState('');
+
+  const filteredServices = services.filter(s => 
+    s.nombre_servicio.toLowerCase().includes(filterText.toLowerCase()) ||
+    (s.piso_sector && s.piso_sector.toLowerCase().includes(filterText.toLowerCase()))
+  );
+
   return (
-    <div className="bg-white rounded-lg p-5 border border-slate-200 shadow-cpvs">
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <Building className="w-5 h-5 text-cpvs-blue" />
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-tight">
-            Distribución por Servicio Base Propietario
-          </h2>
-          <Tooltip position="right" content="Stock patrimonial asignado a cada área clínica (UTI, Neo, Quirófano, Pisos) para prevenir desabastecimiento." />
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+      {/* Header del Directorio de Servicios */}
+      <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <Building className="w-5 h-5 text-cpvs-blue" />
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+              Directorio de Servicios y Dotación Clínica
+            </h2>
+          </div>
+          <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+            Distribución patrimonial por área médica para garantizar stock de seguridad y custodia de activos.
+          </p>
         </div>
-        <span className="text-xs text-slate-500 font-medium">
-          {services.length} Servicios Clínicos
-        </span>
+
+        {/* Buscador de Servicio */}
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Filtrar servicio o piso..."
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-48 sm:w-56"
+            />
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200/60 whitespace-nowrap">
+            {services.length} Servicios
+          </span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {services.map((svc) => {
-          const totalBombas = svc.bombas_totales;
-          const totalResp = svc.respiradores_totales;
-          const hayEquipos = totalBombas > 0 || totalResp > 0;
+      {/* Lista / Tabla de Servicios */}
+      <div className="divide-y divide-slate-100">
+        {filteredServices.length === 0 ? (
+          <div className="p-8 text-center text-slate-400 text-xs">
+            No se encontraron servicios clínicos con el término ingresado.
+          </div>
+        ) : (
+          filteredServices.map((svc) => {
+            const total = svc.total_equipos > 0 ? svc.total_equipos : (svc.bombas_totales + svc.respiradores_totales);
+            const libres = svc.disponibles !== undefined ? svc.disponibles : (svc.bombas_disponibles + svc.respiradores_disponibles);
+            const enUso = svc.en_uso !== undefined ? svc.en_uso : (svc.bombas_en_uso + svc.respiradores_en_uso);
+            const enTaller = svc.en_mantenimiento !== undefined ? svc.en_mantenimiento : (svc.bombas_taller + svc.respiradores_taller);
 
-          return (
-            <div
-              key={svc.deposito_id}
-              onClick={() => onSelectService?.(svc.deposito_id)}
-              className={`p-3.5 rounded border transition-all cursor-pointer ${
-                hayEquipos
-                  ? 'border-slate-200 bg-slate-50/50 hover:bg-white hover:border-cpvs-cyan hover:shadow-sm'
-                  : 'border-dashed border-slate-200 bg-white opacity-60'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-xs text-cpvs-blue truncate" title={svc.nombre_servicio}>
-                  {svc.nombre_servicio}
-                </span>
-                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
-                  Dep #{svc.deposito_id}
-                </span>
-              </div>
+            const ratioLibres = total > 0 ? Math.round((libres / total) * 100) : 0;
+            const ratioUso = total > 0 ? Math.round((enUso / total) * 100) : 0;
+            const ratioTaller = total > 0 ? Math.round((enTaller / total) * 100) : 0;
 
-              <div className="space-y-1.5 text-xs">
-                {/* Bombas del servicio */}
-                <div className="flex items-center justify-between text-slate-600">
-                  <span className="flex items-center gap-1 text-[11px]">
-                    <Syringe className="w-3 h-3 text-cpvs-blue" />
-                    Bombas Infusión:
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-slate-800">{totalBombas}</span>
-                    {totalBombas > 0 && (
-                      <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1 rounded">
-                        {svc.bombas_disponibles} libres
-                      </span>
+            const hayEquipos = total > 0;
+
+            return (
+              <div
+                key={svc.deposito_id}
+                onClick={() => hayEquipos && onSelectService?.(svc.deposito_id)}
+                className={`p-4 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors ${
+                  hayEquipos 
+                    ? 'hover:bg-slate-50/80 cursor-pointer group' 
+                    : 'bg-slate-50/40 opacity-60 cursor-default'
+                }`}
+              >
+                {/* Columna 1: Nombre de Servicio y Ubicación Real */}
+                <div className="min-w-[240px]">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-cpvs-blue transition-colors">
+                      {svc.nombre_servicio}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                    <MapPin className="w-3.5 h-3.5 text-cpvs-cyan shrink-0" />
+                    <span>{svc.piso_sector || 'Sede Central'}</span>
+                  </div>
+                </div>
+
+                {/* Columna 2: Barra Proporcional de Disponibilidad */}
+                <div className="flex-1 max-w-xs space-y-1">
+                  <div className="flex justify-between text-[11px]">
+                    <span className="text-slate-500 font-medium">Disponibilidad del Servicio</span>
+                    <span className="font-mono font-bold text-slate-700">
+                      {hayEquipos ? `${ratioLibres}%` : 'Sin dotación'}
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+                    {hayEquipos ? (
+                      <>
+                        <div className="bg-emerald-500 h-full" style={{ width: `${ratioLibres}%` }} title={`Libres: ${libres}`} />
+                        <div className="bg-blue-500 h-full" style={{ width: `${ratioUso}%` }} title={`En Paciente: ${enUso}`} />
+                        <div className="bg-amber-500 h-full" style={{ width: `${ratioTaller}%` }} title={`En Taller: ${enTaller}`} />
+                      </>
+                    ) : (
+                      <div className="bg-slate-200 h-full w-full" />
                     )}
                   </div>
                 </div>
 
-                {/* Respiradores del servicio */}
-                <div className="flex items-center justify-between text-slate-600">
-                  <span className="flex items-center gap-1 text-[11px]">
-                    <Wind className="w-3 h-3 text-cpvs-cyan" />
-                    Respiradores:
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-slate-800">{totalResp}</span>
-                    {totalResp > 0 && (
-                      <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1 rounded">
-                        {svc.respiradores_disponibles} libres
-                      </span>
-                    )}
+                {/* Columna 3: Conteo Desglosado */}
+                <div className="flex items-center gap-4 text-xs font-mono">
+                  <div className="text-left min-w-[70px]">
+                    <span className="text-[10px] text-slate-400 block font-sans">Dotación</span>
+                    <span className="text-base font-bold text-slate-900">{total}</span>
                   </div>
+
+                  <div className="text-left min-w-[65px]">
+                    <span className="text-[10px] text-emerald-600 block font-sans font-medium">Libres</span>
+                    <span className="text-base font-bold text-emerald-700">{libres}</span>
+                  </div>
+
+                  <div className="text-left min-w-[65px]">
+                    <span className="text-[10px] text-blue-600 block font-sans font-medium">En Sala</span>
+                    <span className="text-base font-bold text-blue-700">{enUso}</span>
+                  </div>
+
+                  <div className="text-left min-w-[65px]">
+                    <span className="text-[10px] text-amber-600 block font-sans font-medium">Taller</span>
+                    <span className="text-base font-bold text-amber-700">{enTaller}</span>
+                  </div>
+                </div>
+
+                {/* Columna 4: Botón de Acción */}
+                <div className="flex items-center justify-end">
+                  {hayEquipos ? (
+                    <button 
+                      type="button"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-cpvs-blue bg-blue-50/80 hover:bg-cpvs-blue hover:text-white transition-all shadow-2xs"
+                    >
+                      <span>Ver Equipos</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      Vacante
+                    </span>
+                  )}
                 </div>
               </div>
-
-              {/* Barra de Progreso de Disponibilidad */}
-              {hayEquipos && (
-                <div className="mt-2.5 pt-2 border-t border-slate-200/60">
-                  <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden flex">
-                    <div 
-                      className="bg-emerald-500 h-full" 
-                      style={{ 
-                        width: `${Math.round(((svc.bombas_disponibles + svc.respiradores_disponibles) / (totalBombas + totalResp)) * 100)}%` 
-                      }}
-                      title="Disponibles"
-                    />
-                    <div 
-                      className="bg-blue-500 h-full" 
-                      style={{ 
-                        width: `${Math.round(((svc.bombas_en_uso + svc.respiradores_en_uso) / (totalBombas + totalResp)) * 100)}%` 
-                      }}
-                      title="En Uso"
-                    />
-                    <div 
-                      className="bg-amber-500 h-full" 
-                      style={{ 
-                        width: `${Math.round(((svc.bombas_taller + svc.respiradores_taller) / (totalBombas + totalResp)) * 100)}%` 
-                      }}
-                      title="En Mantenimiento"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

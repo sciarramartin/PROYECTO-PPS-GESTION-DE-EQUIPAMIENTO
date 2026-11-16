@@ -1,7 +1,6 @@
 import React from 'react';
-import { Syringe, Wind, CheckCircle2, BedDouble, Wrench } from 'lucide-react';
-import { DashboardSummary } from '../../types';
-import { Tooltip } from '../common/Tooltip';
+import { Syringe, Wind, Activity, CheckCircle2, BedDouble, Wrench, ChevronRight, Layers } from 'lucide-react';
+import { DashboardSummary, CategorySummary } from '../../types';
 
 interface MetricCardsProps {
   summary: DashboardSummary | null;
@@ -11,207 +10,273 @@ interface MetricCardsProps {
 export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCategory }) => {
   if (!summary) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-32 bg-slate-200 rounded-lg"></div>
-        ))}
+      <div className="space-y-4 animate-pulse">
+        <div className="h-36 bg-slate-200 rounded-2xl"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="h-44 bg-slate-200 rounded-xl"></div>
+          <div className="h-44 bg-slate-200 rounded-xl"></div>
+        </div>
       </div>
     );
   }
 
-  const { bombas, respiradores, totales_globales } = summary;
+  const { totales_globales } = summary;
+  const pctLibres = totales_globales.total_equipos > 0 
+    ? Math.round((totales_globales.disponibles / totales_globales.total_equipos) * 100) 
+    : 0;
+  const pctUso = totales_globales.total_equipos > 0 
+    ? Math.round((totales_globales.en_uso / totales_globales.total_equipos) * 100) 
+    : 0;
+  const pctTaller = totales_globales.total_equipos > 0 
+    ? Math.round((totales_globales.en_mantenimiento / totales_globales.total_equipos) * 100) 
+    : 0;
+
+  // Lista dinámica de categorías desde el backend o fallback estructurado
+  const categorias: CategorySummary[] = summary.categorias && summary.categorias.length > 0 
+    ? summary.categorias 
+    : [
+        {
+          categoria: 'BOMBA_INFUSION',
+          nombre_display: 'Bombas de Infusión',
+          total: summary.bombas.total,
+          disponibles: summary.bombas.disponibles,
+          en_uso: summary.bombas.en_uso,
+          en_mantenimiento: summary.bombas.en_mantenimiento
+        },
+        {
+          categoria: 'RESPIRADOR',
+          nombre_display: 'Respiradores Volumétricos',
+          total: summary.respiradores.total,
+          disponibles: summary.respiradores.disponibles,
+          en_uso: summary.respiradores.en_uso,
+          en_mantenimiento: summary.respiradores.en_mantenimiento
+        }
+      ];
+
+  const getCategoryIcon = (cat: string) => {
+    switch (cat) {
+      case 'BOMBA_INFUSION':
+        return <Syringe className="w-5 h-5 text-cpvs-blue" />;
+      case 'RESPIRADOR':
+        return <Wind className="w-5 h-5 text-cpvs-cyan" />;
+      default:
+        return <Activity className="w-5 h-5 text-indigo-600" />;
+    }
+  };
 
   return (
-    <div className="space-y-4">
-      {/* Tarjetas Principales de Bombas y Respiradores (US-01) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Tarjeta Bombas de Infusión */}
-        <div 
-          onClick={() => onFilterCategory?.('BOMBA_INFUSION')}
-          className="bg-white rounded-lg p-5 border-l-4 border-l-cpvs-blue shadow-cpvs hover:shadow-cpvs-lg transition-all cursor-pointer relative"
-        >
-          {/* Tooltip en esquina superior derecha */}
-          <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>
-            <Tooltip 
-              position="bottom"
-              content="Total de bombas de infusión auditadas en el sistema. Registra unidades disponibles, en uso con pacientes y en mantenimiento técnico." 
-            />
-          </div>
+    <div className="space-y-6">
+      {/* ======================================================== */}
+      {/* 1. HERO DISPONIBILIDAD GLOBAL (Estilo Enterprise / SaaS) */}
+      {/* ======================================================== */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          {/* Anillo de Progreso + Títulos */}
+          <div className="flex items-center gap-5">
+            {/* SVG Ring Progress */}
+            <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
+              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 36 36">
+                <path
+                  className="text-slate-100"
+                  strokeWidth="3.2"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  className="text-emerald-500 transition-all duration-700 ease-out"
+                  strokeDasharray={`${pctLibres}, 100`}
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xl font-black text-slate-900 tracking-tight font-mono">
+                  {pctLibres}%
+                </span>
+                <span className="text-[9px] font-semibold text-emerald-700 uppercase tracking-wider">
+                  Libres
+                </span>
+              </div>
+            </div>
 
-          <div className="flex items-start justify-between pr-6">
             <div>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-blue-50 text-cpvs-blue">
-                <Syringe className="w-3.5 h-3.5 text-cpvs-blue" />
-                Bombas de Infusión Continua
-              </span>
-              <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {bombas.total}
-                </span>
-                <span className="text-xs text-slate-500 font-medium">unidades auditadas</span>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                  Disponibilidad de Parque Biomédico
+                </h2>
               </div>
-            </div>
-            <div className="p-2.5 bg-blue-50 text-cpvs-blue rounded-lg">
-              <Syringe className="w-6 h-6" />
+              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed max-w-md">
+                Estado operativo consolidado en tiempo real. Discriminación entre equipos listos para intubación/infusión, en sala y bajo servicio técnico.
+              </p>
             </div>
           </div>
 
-          {/* Métricas de Estado */}
-          <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center">
-            <div className="bg-emerald-50/70 p-2 rounded relative group">
-              <div className="flex items-center justify-center gap-1 text-emerald-700 text-[11px] font-semibold">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Libres</span>
-                <span onClick={(e) => e.stopPropagation()}>
-                  <Tooltip position="top" content="Bombas desinfectadas y listas en depósito o servicio para ser asignadas de inmediato a cualquier internado." />
-                </span>
-              </div>
-              <p className="text-lg font-bold text-emerald-800">{bombas.disponibles}</p>
+          {/* Cuatro Métricas Globales Integradas */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+            <div className="bg-slate-50/80 border border-slate-200/60 rounded-xl p-3">
+              <span className="text-[11px] font-medium text-slate-500 block">Total Parque</span>
+              <span className="text-2xl font-black text-slate-900 font-mono tracking-tight">
+                {totales_globales.total_equipos}
+              </span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">unidades auditadas</span>
             </div>
 
-            <div className="bg-blue-50/70 p-2 rounded relative group">
-              <div className="flex items-center justify-center gap-1 text-blue-700 text-[11px] font-semibold">
-                <BedDouble className="w-3 h-3" />
-                <span>En Paciente</span>
-                <span onClick={(e) => e.stopPropagation()}>
-                  <Tooltip position="top" content="Bombas actualmente conectadas a pacientes en internación general o áreas críticas." />
-                </span>
+            <div className="bg-emerald-50/50 border border-emerald-100 rounded-xl p-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span className="text-[11px] font-semibold text-emerald-800">Libres</span>
               </div>
-              <p className="text-lg font-bold text-blue-800">{bombas.en_uso}</p>
+              <span className="text-2xl font-black text-emerald-700 font-mono tracking-tight">
+                {totales_globales.disponibles}
+              </span>
+              <span className="text-[10px] text-emerald-600 block mt-0.5">Listos para asignar</span>
             </div>
 
-            <div className="bg-amber-50/70 p-2 rounded relative group">
-              <div className="flex items-center justify-center gap-1 text-amber-700 text-[11px] font-semibold">
-                <Wrench className="w-3 h-3" />
-                <span>En Taller</span>
-                <span onClick={(e) => e.stopPropagation()}>
-                  <Tooltip position="top" content="Bombas en taller por mantenimiento preventivo, calibración de flujo o reparación por falla." />
-                </span>
+            <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                <span className="text-[11px] font-semibold text-blue-800">En Paciente</span>
               </div>
-              <p className="text-lg font-bold text-amber-800">{bombas.en_mantenimiento}</p>
+              <span className="text-2xl font-black text-blue-700 font-mono tracking-tight">
+                {totales_globales.en_uso}
+              </span>
+              <span className="text-[10px] text-blue-600 block mt-0.5">Uso activo en sala</span>
+            </div>
+
+            <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span className="text-[11px] font-semibold text-amber-800">En Taller</span>
+              </div>
+              <span className="text-2xl font-black text-amber-700 font-mono tracking-tight">
+                {totales_globales.en_mantenimiento}
+              </span>
+              <span className="text-[10px] text-amber-600 block mt-0.5">Mantenimiento</span>
             </div>
           </div>
         </div>
 
-        {/* Tarjeta Respiradores Volumétricos */}
-        <div 
-          onClick={() => onFilterCategory?.('RESPIRADOR')}
-          className="bg-white rounded-lg p-5 border-l-4 border-l-cpvs-cyan shadow-cpvs hover:shadow-cpvs-lg transition-all cursor-pointer relative"
-        >
-          {/* Tooltip en esquina superior derecha */}
-          <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>
-            <Tooltip 
-              position="bottom"
-              content="Total de respiradores de soporte vital de terapia intensiva y pisos. Monitorea disponibilidad crítica para emergencias respiratorias." 
+        {/* Barra de Distribución Proporcional Segmentada */}
+        <div className="mt-5 pt-4 border-t border-slate-100 space-y-1.5">
+          <div className="flex justify-between text-[11px] font-semibold text-slate-500">
+            <span>Distribución Proporcional de la Flota</span>
+            <span className="font-mono text-slate-700">
+              {pctLibres}% Libres • {pctUso}% En Paciente • {pctTaller}% En Taller
+            </span>
+          </div>
+          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+            <div 
+              className="bg-emerald-500 h-full transition-all duration-500" 
+              style={{ width: `${pctLibres}%` }}
+              title={`Libres: ${totales_globales.disponibles} (${pctLibres}%)`}
             />
-          </div>
-
-          <div className="flex items-start justify-between pr-6">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-cyan-50 text-cpvs-cyan">
-                <Wind className="w-3.5 h-3.5 text-cpvs-cyan" />
-                Respiradores Volumétricos
-              </span>
-              <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {respiradores.total}
-                </span>
-                <span className="text-xs text-slate-500 font-medium">unidades auditadas</span>
-              </div>
-            </div>
-            <div className="p-2.5 bg-cyan-50 text-cpvs-cyan rounded-lg">
-              <Wind className="w-6 h-6" />
-            </div>
-          </div>
-
-          {/* Métricas de Estado */}
-          <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center">
-            <div className="bg-emerald-50/70 p-2 rounded relative group">
-              <div className="flex items-center justify-center gap-1 text-emerald-700 text-[11px] font-semibold">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Libres</span>
-                <span onClick={(e) => e.stopPropagation()}>
-                  <Tooltip position="top" content="Respiradores esterilizados, calibrados y listos en stock para intubación inmediata." />
-                </span>
-              </div>
-              <p className="text-lg font-bold text-emerald-800">{respiradores.disponibles}</p>
-            </div>
-
-            <div className="bg-blue-50/70 p-2 rounded relative group">
-              <div className="flex items-center justify-center gap-1 text-blue-700 text-[11px] font-semibold">
-                <BedDouble className="w-3 h-3" />
-                <span>En Paciente</span>
-                <span onClick={(e) => e.stopPropagation()}>
-                  <Tooltip position="top" content="Respiradores con ventilación mecánica activa asistiendo a pacientes en UTI, UTIP o Guardia." />
-                </span>
-              </div>
-              <p className="text-lg font-bold text-blue-800">{respiradores.en_uso}</p>
-            </div>
-
-            <div className="bg-amber-50/70 p-2 rounded relative group">
-              <div className="flex items-center justify-center gap-1 text-amber-700 text-[11px] font-semibold">
-                <Wrench className="w-3 h-3" />
-                <span>En Taller</span>
-                <span onClick={(e) => e.stopPropagation()}>
-                  <Tooltip position="top" content="Respiradores en service oficial (Tecme, Leistung) o taller interno por control de celdas o alarmas." />
-                </span>
-              </div>
-              <p className="text-lg font-bold text-amber-800">{respiradores.en_mantenimiento}</p>
-            </div>
+            <div 
+              className="bg-blue-500 h-full transition-all duration-500" 
+              style={{ width: `${pctUso}%` }}
+              title={`En Paciente: ${totales_globales.en_uso} (${pctUso}%)`}
+            />
+            <div 
+              className="bg-amber-500 h-full transition-all duration-500" 
+              style={{ width: `${pctTaller}%` }}
+              title={`En Taller: ${totales_globales.en_mantenimiento} (${pctTaller}%)`}
+            />
           </div>
         </div>
       </div>
 
-      {/* Franja de Métricas Operativas Globales */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-        <div className="bg-white border border-slate-200 rounded p-3 flex items-center justify-between relative">
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-slate-500 block">Total Parque Biomédico</span>
-              <Tooltip position="top" content="Inventario consolidado de todos los equipos biomédicos registrados en la plataforma." />
-            </div>
-            <span className="text-xl font-bold text-slate-800">{totales_globales.total_equipos}</span>
+      {/* ======================================================== */}
+      {/* 2. CATÁLOGO DINÁMICO DE FAMILIAS DE EQUIPOS              */}
+      {/*    (Extensible: soporta N categorías sin romper el UI)    */}
+      {/* ======================================================== */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-cpvs-blue" />
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-tight">
+              Familias de Equipamiento Biomédico
+            </h3>
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+              {categorias.length} Familias Activas
+            </span>
           </div>
-          <span className="text-slate-400 font-semibold text-[11px]">100%</span>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded p-3 flex items-center justify-between relative">
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-emerald-700 block font-semibold">Disponibilidad Inmediata</span>
-              <Tooltip position="top" content="Porcentaje del parque operativo que se encuentra libre y listo para su uso sin demoras." />
-            </div>
-            <span className="text-xl font-bold text-emerald-700">{totales_globales.disponibles}</span>
-          </div>
-          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded text-[10px]">
-            {totales_globales.total_equipos > 0 ? Math.round((totales_globales.disponibles / totales_globales.total_equipos) * 100) : 0}%
+          <span className="text-[11px] text-slate-500 hidden sm:inline">
+            Hacé clic en cualquier tarjeta para filtrar el inventario
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded p-3 flex items-center justify-between relative">
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-blue-700 block font-semibold">En Tratamiento Activo</span>
-              <Tooltip position="top" content="Porcentaje de equipos actualmente operando en sala, habitaciones o camas de internación." />
-            </div>
-            <span className="text-xl font-bold text-blue-700">{totales_globales.en_uso}</span>
-          </div>
-          <span className="px-1.5 py-0.5 bg-blue-100 text-blue-800 font-bold rounded text-[10px]">
-            {totales_globales.total_equipos > 0 ? Math.round((totales_globales.en_uso / totales_globales.total_equipos) * 100) : 0}%
-          </span>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {categorias.map((cat) => {
+            const ratioLibres = cat.total > 0 ? Math.round((cat.disponibles / cat.total) * 100) : 0;
+            const ratioUso = cat.total > 0 ? Math.round((cat.en_uso / cat.total) * 100) : 0;
+            const ratioTaller = cat.total > 0 ? Math.round((cat.en_mantenimiento / cat.total) * 100) : 0;
 
-        <div className="bg-white border border-slate-200 rounded p-3 flex items-center justify-between relative">
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-amber-700 block font-semibold">En Taller Técnico</span>
-              <Tooltip position="top" content="Porcentaje de máquinas temporalmente fuera de servicio por mantenimiento preventivo o correctivo." />
-            </div>
-            <span className="text-xl font-bold text-amber-700">{totales_globales.en_mantenimiento}</span>
-          </div>
-          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 font-bold rounded text-[10px]">
-            {totales_globales.total_equipos > 0 ? Math.round((totales_globales.en_mantenimiento / totales_globales.total_equipos) * 100) : 0}%
-          </span>
+            return (
+              <div
+                key={cat.categoria}
+                onClick={() => onFilterCategory?.(cat.categoria)}
+                className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-2xs hover:shadow-md hover:border-cpvs-blue/50 transition-all cursor-pointer group flex flex-col justify-between"
+              >
+                <div>
+                  {/* Encabezado de la Categoría */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+                        {getCategoryIcon(cat.categoria)}
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-cpvs-blue transition-colors">
+                          {cat.nombre_display}
+                        </h4>
+                        <span className="text-[11px] text-slate-400 font-mono">
+                          {cat.total} unidades registradas
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                      {ratioLibres}% libre
+                    </span>
+                  </div>
+
+                  {/* Barra de progreso de la categoría */}
+                  <div className="mt-3.5 space-y-1">
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden flex">
+                      <div className="bg-emerald-500 h-full" style={{ width: `${ratioLibres}%` }} />
+                      <div className="bg-blue-500 h-full" style={{ width: `${ratioUso}%` }} />
+                      <div className="bg-amber-500 h-full" style={{ width: `${ratioTaller}%` }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submétricas limpias con puntos de color */}
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span className="text-slate-600 font-medium">Libres:</span>
+                    <span className="font-bold text-slate-900 font-mono">{cat.disponibles}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span className="text-slate-600 font-medium">En Uso:</span>
+                    <span className="font-bold text-slate-900 font-mono">{cat.en_uso}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span className="text-slate-600 font-medium">Taller:</span>
+                    <span className="font-bold text-slate-900 font-mono">{cat.en_mantenimiento}</span>
+                  </div>
+
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-cpvs-blue group-hover:translate-x-0.5 transition-all" />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -44,10 +44,19 @@ export class EquipmentRepository {
       params.push(filters.estado);
     }
 
-    if (filters?.categoria === 'BOMBA_INFUSION') {
-      conditions.push('e.articulo_id IN (1001, 1002)');
-    } else if (filters?.categoria === 'RESPIRADOR') {
-      conditions.push('e.articulo_id IN (2001, 2002)');
+    if (filters?.categoria && filters.categoria !== 'ALL') {
+      if (filters.categoria === 'BOMBA_INFUSION') {
+        conditions.push("a.nombre LIKE '%Bomba%'");
+      } else if (filters.categoria === 'RESPIRADOR') {
+        conditions.push("a.nombre LIKE '%Respirador%'");
+      } else if (filters.categoria === 'MONITOR') {
+        conditions.push("a.nombre LIKE '%Monitor%'");
+      } else if (filters.categoria === 'DESFIBRILADOR') {
+        conditions.push("a.nombre LIKE '%Desfibrilador%'");
+      } else {
+        conditions.push("e.articulo_id = ?");
+        params.push(filters.categoria);
+      }
     }
 
     if (filters?.deposito_id) {

@@ -38,9 +38,23 @@ export interface Location {
   activo: boolean;
 }
 
+export interface CategorySummary {
+  categoria: string;
+  nombre_display: string;
+  total: number;
+  disponibles: number;
+  en_uso: number;
+  en_mantenimiento: number;
+}
+
 export interface ServiceStockBreakdown {
   deposito_id: number;
   nombre_servicio: string;
+  piso_sector?: string;
+  total_equipos: number;
+  disponibles: number;
+  en_uso: number;
+  en_mantenimiento: number;
   bombas_totales: number;
   bombas_disponibles: number;
   bombas_en_uso: number;
@@ -52,6 +66,7 @@ export interface ServiceStockBreakdown {
 }
 
 export interface DashboardSummary {
+  categorias: CategorySummary[];
   bombas: {
     total: number;
     disponibles: number;
