@@ -11,25 +11,25 @@
 
 ## 1. Tabla Resumen del Product Backlog Priorizado
 
-| ID | Historia de Usuario | Prioridad | Estimación (SP) | MVP Objetivo | Dependencias |
-| :-: | :--- | :-: | :-: | :-: | :-: |
-| **US-01** | Visualización del Tablero Central de Disponibilidad | Crítica (P1) | 5 SP | **MVP 1** | Ninguna |
-| **US-02** | Alta y Maestro de Equipos con Identificación Dual | Crítica (P1) | 5 SP | **MVP 1** | Ninguna |
-| **US-03** | Generación e Impresión de Etiquetas Duales (Sticker + QR) | Alta (P2) | 3 SP | **MVP 1** | US-02 |
-| **US-04** | Mapeo y Consulta de Ubicaciones Unificadas | Crítica (P1) | 3 SP | **MVP 1** | Ninguna |
-| **US-05** | Registro de Préstamo Rápido en 3 Clics (Móvil y PC) | Crítica (P1) | 5 SP | **MVP 1** | US-02, US-04 |
-| **US-06** | Localización Inmediata de Activos en Tiempo Real | Alta (P2) | 2 SP | **MVP 1** | US-05 |
-| **US-07** | Reingreso de Equipo con Tilde de Bioseguridad LT8 | Crítica (P1) | 5 SP | **MVP 1** | US-05 |
-| **US-08** | Bloqueo Inmediato por Falla Crítica (Anti-Uso en Sala) | Crítica (P1) | 3 SP | **MVP 2** | US-02 |
-| **US-09** | Registro Digital de Salida a Mantenimiento (Libros de Guardia) | Alta (P2) | 5 SP | **MVP 2** | US-02, US-04 |
-| **US-10** | Validación Estricta Anti-Intercambio de Serial al Retorno | Crítica (P1) | 5 SP | **MVP 2** | US-09 |
-| **US-11** | Carga y Asociación de Remitos Oficiales de Service Externo | Media (P3) | 3 SP | **MVP 2** | US-09 |
-| **US-12** | Semáforo Visual de Envejecimiento en Mantenimiento | Media (P3) | 3 SP | **MVP 2** | US-09 |
-| **US-13** | Alerta Preventiva de Bombas Retenidas (+48 hs en Internación) | Alta (P2) | 3 SP | **MVP 3** | US-05 |
-| **US-14** | Gestión y Filtro de Habilitación Ministerial | Media (P3) | 3 SP | **MVP 3** | US-02 |
-| **US-15** | Exportación de Planilla Oficial para Regulación Sanitaria | Alta (P2) | 5 SP | **MVP 3** | US-02, US-11 |
-| **US-16** | Auditoría Completa e Historial Inmutable de Movimientos | Media (P3) | 3 SP | **MVP 3** | US-05, US-07 |
-| **TOTAL** | **16 Historias de Usuario Refinadas** | — | **61 SP** | **3 Sprints** | — |
+| ID | Historia de Usuario | Prioridad | Estimación (SP) | MVP Objetivo | Estado Actual | Issue GitHub |
+| :-: | :--- | :-: | :-: | :-: | :-: | :-: |
+| **US-01** | Visualización del Tablero Central de Disponibilidad | Crítica (P1) | 5 SP | **MVP 1** | ✅ **Completada** | [#1](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/1) |
+| **US-02** | Alta y Maestro de Equipos con Identificación Dual | Crítica (P1) | 5 SP | **MVP 1** | ✅ **Completada** | [#2](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/2) |
+| **US-03** | Generación e Impresión de Etiquetas Duales (Sticker + QR) | Alta (P2) | 3 SP | **MVP 1** | ✅ **Completada** | [#3](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/3) |
+| **US-04** | Mapeo y Consulta de Ubicaciones Unificadas | Crítica (P1) | 3 SP | **MVP 1** | ✅ **Completada** | [#4](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/4) |
+| **US-05** | Registro de Préstamo Rápido en 3 Clics (Móvil y PC) | Crítica (P1) | 5 SP | **MVP 1** | ✅ **Completada** | [#5](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/5) |
+| **US-06** | Localización Inmediata de Activos en Tiempo Real | Alta (P2) | 2 SP | **MVP 1** | ✅ **Completada** | [#6](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/6) |
+| **US-07** | Reingreso de Equipo con Tilde de Bioseguridad LT8 | Crítica (P1) | 5 SP | **MVP 1** | ✅ **Completada** | [#7](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/7) |
+| **US-08** | Bloqueo Inmediato por Falla Crítica (Anti-Uso en Sala) | Crítica (P1) | 3 SP | **MVP 2** | ⏳ *Planificada (Sprint 2)* | [#8](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/8) |
+| **US-09** | Registro Digital de Salida a Mantenimiento (Libros de Guardia) | Alta (P2) | 5 SP | **MVP 2** | ⏳ *Planificada (Sprint 2)* | [#9](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/9) |
+| **US-10** | Validación Estricta Anti-Intercambio de Serial al Retorno | Crítica (P1) | 5 SP | **MVP 2** | ⏳ *Planificada (Sprint 2)* | [#10](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/10) |
+| **US-11** | Carga y Asociación de Remitos Oficiales de Service Externo | Media (P3) | 3 SP | **MVP 2** | ⏳ *Planificada (Sprint 2)* | [#11](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/11) |
+| **US-12** | Semáforo Visual de Envejecimiento en Mantenimiento | Media (P3) | 3 SP | **MVP 2** | ⏳ *Planificada (Sprint 2)* | [#12](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/12) |
+| **US-13** | Alerta Preventiva de Bombas Retenidas (+48 hs en Internación) | Alta (P2) | 3 SP | **MVP 3** | ⏳ *Planificada (Sprint 3)* | [#13](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/13) |
+| **US-14** | Gestión y Filtro de Habilitación Ministerial | Media (P3) | 3 SP | **MVP 3** | ⏳ *Planificada (Sprint 3)* | [#14](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/14) |
+| **US-15** | Exportación de Planilla Oficial para Regulación Sanitaria | Alta (P2) | 5 SP | **MVP 3** | ⏳ *Planificada (Sprint 3)* | [#15](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/15) |
+| **US-16** | Auditoría Completa e Historial Inmutable de Movimientos | Media (P3) | 3 SP | **MVP 3** | ⏳ *Planificada (Sprint 3)* | [#16](https://github.com/sciarramartin/PROYECTO-PPS-GESTION-DE-EQUIPAMIENTO/issues/16) |
+| **TOTAL** | **16 Historias de Usuario Refinadas** | — | **61 SP** | **3 Sprints** | **28 SP Listos (46%)** | **7 Cerradas / 9 Abiertas** |
 
 * **Distribución de Carga por Iteración:**
   * **MVP 1 (Semanas 1 a 3):** 28 Story Points (Núcleo Operativo y Trazabilidad Base).
