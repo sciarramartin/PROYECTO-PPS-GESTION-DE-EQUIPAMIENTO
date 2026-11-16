@@ -1,14 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Search, 
-  Filter, 
   X, 
   MapPin, 
   Building, 
   QrCode, 
+  ChevronDown,
+  Zap,
   RotateCcw,
-  SlidersHorizontal,
-  ChevronDown
+  Tag,
+  Printer,
+  ShieldCheck,
+  Clock,
+  Sparkles
 } from 'lucide-react';
 import { Equipment, EstadoOperativo } from '../../types';
 
@@ -19,6 +23,9 @@ interface EquipmentTableProps {
   selectedCategory: string;
   setSelectedCategory: (cat: string) => void;
   onSelectEquipment?: (eq: Equipment) => void;
+  onOpenLoanModal?: (eq?: Equipment) => void;
+  onOpenReturnModal?: (eq: Equipment) => void;
+  onOpenLabelModal?: (eq?: Equipment, batch?: Equipment[]) => void;
 }
 
 export const EquipmentTable: React.FC<EquipmentTableProps> = ({
@@ -27,7 +34,10 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
   setSearchQuery,
   selectedCategory,
   setSelectedCategory,
-  onSelectEquipment
+  onSelectEquipment,
+  onOpenLoanModal,
+  onOpenReturnModal,
+  onOpenLabelModal
 }) => {
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedService, setSelectedService] = useState<string>('ALL');
@@ -128,7 +138,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
       {/* ======================================================== */}
-      {/* BARRA DE HERRAMIENTAS Y FILTROS UNIFICADA                */}
+      {/* BARRA DE HERRAMIENTAS Y ACCIONES RÁPIDAS                 */}
       {/* ======================================================== */}
       <div className="p-4 sm:p-5 border-b border-slate-100 space-y-3">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
@@ -143,11 +153,33 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Identificación dual (Sticker + QR) con trazabilidad de ubicación en tiempo real.
+              Identificación dual (Sticker + QR) con trazabilidad y bioseguridad en tiempo real.
             </p>
           </div>
 
-          {/* Controles de Filtrado en Fila */}
+          {/* Botones de Acción Global Rápida */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onOpenLabelModal?.(undefined, filteredEquipment)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-cpvs-blue shadow-2xs transition-all active:scale-95 cursor-pointer"
+              title="Generar e imprimir etiquetas físicas para los equipos filtrados"
+            >
+              <Printer className="w-3.5 h-3.5 text-slate-500" />
+              <span>Imprimir Lote ({filteredEquipment.length})</span>
+            </button>
+
+            <button
+              onClick={() => onOpenLoanModal?.()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-300" />
+              <span>+ Préstamo Rápido</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Controles de Filtrado en Fila */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
           <div className="flex flex-wrap items-center gap-2">
             {/* 1. Selector de Familia / Categoría */}
             <div className="relative">
@@ -195,38 +227,38 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               </select>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
             </div>
+          </div>
 
-            {/* Buscador Integrado */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Filtrar por serie, sticker..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-7 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-44 sm:w-52"
-              />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-2 text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
+          {/* Buscador Integrado */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Filtrar por serie, sticker..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 pr-7 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-48 sm:w-56"
+            />
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
         {/* Barra de Filtros Activos (Chips removibles) */}
         {hasActiveFilters && (
           <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-xs flex-wrap">
-            <span className="text-slate-400 font-medium text-[11px]">Filtros aplicados:</span>
+            <span className="text-slate-400 font-medium text-[11px]">Filtros activos:</span>
 
             {selectedCategory !== 'ALL' && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-cpvs-blue border border-blue-200 text-[11px] font-semibold">
                 Familia: {uniqueCategories.find(c => c.id === selectedCategory)?.label || selectedCategory}
-                <button onClick={() => setSelectedCategory('ALL')} className="hover:text-blue-900">
+                <button onClick={() => setSelectedCategory('ALL')} className="hover:text-blue-900 cursor-pointer">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -235,7 +267,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
             {selectedStatus !== 'ALL' && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-semibold">
                 Estado: {selectedStatus === 'DISPONIBLE' ? 'Libre' : selectedStatus === 'EN_USO' ? 'En Paciente' : 'En Taller'}
-                <button onClick={() => setSelectedStatus('ALL')} className="hover:text-slate-900">
+                <button onClick={() => setSelectedStatus('ALL')} className="hover:text-slate-900 cursor-pointer">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -244,7 +276,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
             {selectedService !== 'ALL' && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-semibold">
                 Servicio: {selectedService}
-                <button onClick={() => setSelectedService('ALL')} className="hover:text-slate-900">
+                <button onClick={() => setSelectedService('ALL')} className="hover:text-slate-900 cursor-pointer">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -253,7 +285,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
             {searchQuery.trim() !== '' && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-semibold">
                 Búsqueda: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-slate-900">
+                <button onClick={() => setSearchQuery('')} className="hover:text-slate-900 cursor-pointer">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -261,49 +293,48 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
 
             <button
               onClick={clearAllFilters}
-              className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-rose-600 font-semibold ml-auto transition-colors"
+              className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold underline ml-1 cursor-pointer"
             >
-              <RotateCcw className="w-3 h-3" />
-              Limpiar filtros
+              Limpiar todos
             </button>
           </div>
         )}
       </div>
 
       {/* ======================================================== */}
-      {/* VISTA MOBILE (Tarjetas Táctiles Grandes para Alejandra)   */}
+      {/* VISTA MOBILE (Tarjetas Táctiles de Alta Fricción Mínima)  */}
       {/* ======================================================== */}
-      <div className="block lg:hidden divide-y divide-slate-100">
+      <div className="lg:hidden p-4 space-y-3 bg-slate-50/50">
         {filteredEquipment.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-xs">
+          <div className="py-12 text-center text-slate-400 text-xs">
             No se encontraron equipos para los filtros seleccionados.
           </div>
         ) : (
           filteredEquipment.map((item) => (
-            <div 
-              key={item.id_equipo} 
-              onClick={() => onSelectEquipment?.(item)}
-              className="p-4 hover:bg-slate-50 active:bg-blue-50/50 transition-colors cursor-pointer space-y-2.5"
+            <div
+              key={item.id_equipo}
+              className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-3"
             >
+              {/* Encabezado Tarjeta */}
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-9 h-9 rounded-lg bg-cpvs-blue text-white flex items-center justify-center font-black text-sm tracking-tight shadow-xs shrink-0 font-mono">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono font-black text-sm bg-slate-900 text-white shadow-2xs">
                     {item.numero_sticker || '—'}
                   </span>
                   <div>
-                    <h3 className="text-xs font-bold text-slate-900 leading-tight">
+                    <h4 className="text-xs font-bold text-slate-900 leading-tight">
                       {item.nombre_articulo}
-                    </h3>
-                    <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                    </h4>
+                    <span className="text-[11px] font-mono text-slate-400">
                       SN: {item.numero_serie}
-                    </p>
+                    </span>
                   </div>
                 </div>
                 {getStatusBadge(item.estado_operativo)}
               </div>
 
               {/* Ubicación Actual */}
-              <div className="flex items-center justify-between text-xs bg-slate-50/70 p-2.5 rounded-lg border border-slate-100">
+              <div className="flex items-center justify-between text-xs bg-slate-50/80 p-2.5 rounded-lg border border-slate-100">
                 <div className="flex items-center gap-1.5 text-slate-700 font-medium">
                   <MapPin className="w-3.5 h-3.5 text-cpvs-cyan shrink-0" />
                   <span className="truncate">{item.nombre_ubicacion_actual}</span>
@@ -313,31 +344,69 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
                   <span>{item.nombre_servicio_propietario}</span>
                 </div>
               </div>
+
+              {/* Botones de Acción Táctil en Mobile */}
+              <div className="pt-1 flex items-center gap-2">
+                {item.estado_operativo === 'DISPONIBLE' && (
+                  <button
+                    onClick={() => onOpenLoanModal?.(item)}
+                    className="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-98 transition-all cursor-pointer"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-200" />
+                    <span>Prestar Equipo</span>
+                  </button>
+                )}
+
+                {item.estado_operativo === 'EN_USO' && (
+                  <button
+                    onClick={() => onOpenReturnModal?.(item)}
+                    className="flex-1 py-2 px-3 rounded-lg bg-cpvs-blue hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-98 transition-all cursor-pointer"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                    <span>Reingreso (LT8)</span>
+                  </button>
+                )}
+
+                {item.estado_operativo === 'EN_MANTENIMIENTO' && (
+                  <div className="flex-1 py-1.5 px-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold text-center">
+                    En Taller Técnico
+                  </div>
+                )}
+
+                <button
+                  onClick={() => onOpenLabelModal?.(item)}
+                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200/60 transition-colors cursor-pointer shrink-0"
+                  title="Ver Etiqueta y QR"
+                >
+                  <Tag className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
 
       {/* ======================================================== */}
-      {/* VISTA DESKTOP (Tabla Compacta para Alejandra en la PC)   */}
+      {/* VISTA DESKTOP (Tabla con Acciones Directas en Fila)       */}
       {/* ======================================================== */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px]">
               <th className="py-3 px-4 text-center w-20">Sticker</th>
-              <th className="py-3 px-4">Equipo / Modelo Biomédico</th>
-              <th className="py-3 px-4">N° Serie Fábrica</th>
+              <th className="py-3 px-4">Equipo Biomédico</th>
+              <th className="py-3 px-4">N° Serie</th>
               <th className="py-3 px-4">Servicio Base</th>
-              <th className="py-3 px-4">Ubicación Actual en Vivo</th>
+              <th className="py-3 px-4">Ubicación Actual</th>
               <th className="py-3 px-4 text-center">Estado</th>
-              <th className="py-3 px-4 text-center">QR Token</th>
+              <th className="py-3 px-4 text-center w-36">Acción Directa</th>
+              <th className="py-3 px-4 text-center w-16">Etiqueta</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredEquipment.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-slate-400 text-xs">
+                <td colSpan={8} className="py-12 text-center text-slate-400 text-xs">
                   No se encontraron equipos biomédicos para los filtros seleccionados.
                 </td>
               </tr>
@@ -345,8 +414,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               filteredEquipment.map((item) => (
                 <tr 
                   key={item.id_equipo}
-                  onClick={() => onSelectEquipment?.(item)}
-                  className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
+                  className="hover:bg-slate-50/70 transition-colors group"
                 >
                   <td className="py-3 px-4 text-center">
                     <span className="inline-block px-2.5 py-0.5 rounded-md font-mono font-bold text-xs bg-slate-100 group-hover:bg-cpvs-blue group-hover:text-white transition-colors text-slate-700">
@@ -382,11 +450,46 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
                     {getStatusBadge(item.estado_operativo)}
                   </td>
 
+                  {/* Acciones Directas en Fila (Heurística 7: Eficiencia de Uso) */}
                   <td className="py-3 px-4 text-center">
-                    <span className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/60">
-                      <QrCode className="w-3 h-3 text-slate-400" />
-                      {item.codigo_qr.substring(0, 10)}...
-                    </span>
+                    {item.estado_operativo === 'DISPONIBLE' && (
+                      <button
+                        onClick={() => onOpenLoanModal?.(item)}
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-[11px] border border-emerald-200/80 transition-all cursor-pointer shadow-2xs active:scale-95"
+                        title="Registrar préstamo rápido de este equipo a una sala"
+                      >
+                        <Zap className="w-3 h-3 text-emerald-600 group-hover:text-white" />
+                        <span>Prestar</span>
+                      </button>
+                    )}
+
+                    {item.estado_operativo === 'EN_USO' && (
+                      <button
+                        onClick={() => onOpenReturnModal?.(item)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-cpvs-blue hover:bg-cpvs-blue hover:text-white font-bold text-[11px] border border-blue-200/80 transition-all cursor-pointer shadow-2xs active:scale-95"
+                        title="Reingresar equipo con certificación de bioseguridad LT8"
+                      >
+                        <ShieldCheck className="w-3 h-3" />
+                        <span>Reingreso LT8</span>
+                      </button>
+                    )}
+
+                    {item.estado_operativo === 'EN_MANTENIMIENTO' && (
+                      <span className="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-semibold border border-amber-200">
+                        En Taller
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Icono de Etiqueta y QR */}
+                  <td className="py-3 px-4 text-center">
+                    <button
+                      onClick={() => onOpenLabelModal?.(item)}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                      title="Ver / Imprimir etiqueta física autoadhesiva"
+                    >
+                      <Tag className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))

@@ -5,9 +5,13 @@ import { ServiceStockBreakdownView } from './components/dashboard/ServiceStockBr
 import { EquipmentTable } from './components/equipment/EquipmentTable';
 import { LocationList } from './components/locations/LocationList';
 import { Footer } from './components/layout/Footer';
+import { LoanModal } from './components/movements/LoanModal';
+import { ReturnModal } from './components/movements/ReturnModal';
+import { LabelPrintModal } from './components/equipment/LabelPrintModal';
+import { Toast, ToastMessage } from './components/common/Toast';
 import { api } from './services/api';
 import { DashboardSummary, Equipment, Location } from './types';
-import { RefreshCw, AlertCircle } from 'lucide-react';
+import { RefreshCw, AlertCircle, Zap, Tag } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'equipos' | 'ubicaciones'>('dashboard');
@@ -18,6 +22,29 @@ export const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+
+  // Modales de Acción (US-05, US-07, US-03)
+  const [isLoanModalOpen, setIsLoanModalOpen] = useState<boolean>(false);
+  const [loanPreselectedEquipment, setLoanPreselectedEquipment] = useState<Equipment | null>(null);
+
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState<boolean>(false);
+  const [returnEquipment, setReturnEquipment] = useState<Equipment | null>(null);
+
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState<boolean>(false);
+  const [labelEquipment, setLabelEquipment] = useState<Equipment | null>(null);
+  const [labelBatchEquipment, setLabelBatchEquipment] = useState<Equipment[]>([]);
+
+  // Sistema de Notificaciones Toast (Heurística 1 de Nielsen)
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+
+  const showToast = (type: 'success' | 'error' | 'warning' | 'info', title: string, message?: string) => {
+    setToast({
+      id: Date.now().toString(),
+      type,
+      title,
+      message
+    });
+  };
 
   const loadData = async () => {
     try {
@@ -62,6 +89,28 @@ export const App: React.FC = () => {
     setActiveTab('equipos');
   };
 
+  // Handlers para abrir modales
+  const handleOpenLoan = (eq?: Equipment) => {
+    setLoanPreselectedEquipment(eq || null);
+    setIsLoanModalOpen(true);
+  };
+
+  const handleOpenReturn = (eq: Equipment) => {
+    setReturnEquipment(eq);
+    setIsReturnModalOpen(true);
+  };
+
+  const handleOpenLabel = (eq?: Equipment, batch?: Equipment[]) => {
+    setLabelEquipment(eq || null);
+    setLabelBatchEquipment(batch || (eq ? [eq] : equipment));
+    setIsLabelModalOpen(true);
+  };
+
+  const handleMovementSuccess = (message: string) => {
+    showToast('success', 'Movimiento Registrado', message);
+    loadData(); // Actualización inmediata de contadores en vivo
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f4f7ff] font-sans antialiased">
       {/* Barra de Navegación Institucional CPVS */}
@@ -84,7 +133,7 @@ export const App: React.FC = () => {
               </span>
               <span className="text-xs text-slate-300">•</span>
               <span className="text-xs text-slate-500 font-medium">
-                Gestión Centralizada
+                Gestión Centralizada y Trazabilidad
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
@@ -95,6 +144,17 @@ export const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
+            {/* Botón Acceso Rápido Préstamo (US-05) */}
+            <button
+              onClick={() => handleOpenLoan()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
+              title="Registrar préstamo rápido en 3 toques"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-300" />
+              <span>+ Préstamo Rápido</span>
+            </button>
+
+            {/* Sincronización */}
             <button
               onClick={loadData}
               disabled={loading}
@@ -133,7 +193,7 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* Vista: Inventario Completo (US-02, US-06) */}
+        {/* Vista: Inventario Completo con Acciones de Préstamo, Retorno y Etiquetas (US-02, US-03, US-05, US-06, US-07) */}
         {activeTab === 'equipos' && (
           <div className="space-y-4">
             <EquipmentTable
@@ -142,6 +202,9 @@ export const App: React.FC = () => {
               setSearchQuery={setSearchQuery}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
+              onOpenLoanModal={handleOpenLoan}
+              onOpenReturnModal={handleOpenReturn}
+              onOpenLabelModal={handleOpenLabel}
             />
           </div>
         )}
@@ -156,7 +219,38 @@ export const App: React.FC = () => {
 
       {/* Footer Oficial */}
       <Footer />
+
+      {/* Modales de Flujos Operativos */}
+      <LoanModal
+        isOpen={isLoanModalOpen}
+        onClose={() => setIsLoanModalOpen(false)}
+        equipmentList={equipment}
+        locationList={locations}
+        preselectedEquipment={loanPreselectedEquipment}
+        onSuccess={handleMovementSuccess}
+      />
+
+      <ReturnModal
+        isOpen={isReturnModalOpen}
+        onClose={() => setIsReturnModalOpen(false)}
+        equipment={returnEquipment}
+        onSuccess={handleMovementSuccess}
+      />
+
+      <LabelPrintModal
+        isOpen={isLabelModalOpen}
+        onClose={() => setIsLabelModalOpen(false)}
+        equipment={labelEquipment}
+        batchEquipment={labelBatchEquipment}
+      />
+
+      {/* Sistema de Notificaciones Reactivas Toast */}
+      <Toast
+        toast={toast}
+        onClose={() => setToast(null)}
+      />
     </div>
   );
 };
+
 export default App;

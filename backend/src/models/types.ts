@@ -87,3 +87,44 @@ export interface DashboardSummary {
   };
   desglose_por_servicio: ServiceStockBreakdown[];
 }
+
+export type EstadoMovimiento = 'EN_CURSO' | 'DEVUELTO' | 'RECLAMADO';
+
+export interface Movement {
+  id_movimiento: number;
+  id_equipo: number;
+  numero_serie?: string;
+  numero_sticker?: string;
+  nombre_articulo?: string;
+  categoria?: string;
+  ubicacion_origen_id: number;
+  nombre_ubicacion_origen?: string;
+  ubicacion_destino_id: number;
+  nombre_ubicacion_destino?: string;
+  sector_piso_destino?: string | null;
+  fecha_salida: string;
+  fecha_retorno_estimada?: string | null;
+  fecha_retorno_real?: string | null;
+  desinfeccion_realizada: boolean;
+  usuario_envia_id?: number | null;
+  nombre_usuario_envia?: string | null;
+  usuario_recibe_id?: number | null;
+  nombre_usuario_recibe?: string | null;
+  estado_movimiento: EstadoMovimiento;
+  observaciones?: string | null;
+}
+
+export interface CreateLoanDTO {
+  id_equipo: number;
+  ubicacion_destino_id: number;
+  usuario_id?: number;
+  observaciones?: string;
+  horas_retorno_estimado?: number;
+}
+
+export interface CreateReturnDTO {
+  id_equipo: number;
+  desinfeccion_realizada: boolean;
+  usuario_id?: number;
+  observaciones?: string;
+}
