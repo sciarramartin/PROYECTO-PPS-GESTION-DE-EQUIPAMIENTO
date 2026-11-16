@@ -12,6 +12,12 @@ interface LoanModalProps {
   onSuccess: (message: string) => void;
 }
 
+const formatEquipmentCode = (sticker: string | null | undefined): string => {
+  if (!sticker) return '—';
+  if (sticker.startsWith('R-') || sticker.startsWith('B-') || sticker.startsWith('#')) return sticker;
+  return /^\d+$/.test(sticker) ? `#${sticker.padStart(2, '0')}` : sticker;
+};
+
 export const LoanModal: React.FC<LoanModalProps> = ({
   isOpen,
   onClose,
@@ -188,14 +194,14 @@ export const LoanModal: React.FC<LoanModalProps> = ({
               <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-mono font-black text-lg shadow-2xs">
-                    #{currentEquipment.numero_sticker || '—'}
+                    {formatEquipmentCode(currentEquipment.numero_sticker)}
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-slate-900">{currentEquipment.nombre_articulo}</h4>
                     <p className="text-[11px] font-mono text-slate-500">SN: {currentEquipment.numero_serie}</p>
                     <div className="flex items-center gap-1 text-[11px] text-slate-600 mt-0.5">
                       <Building className="w-3 h-3 text-cpvs-blue" />
-                      <span>Sale de: <strong>{currentEquipment.nombre_servicio_propietario}</strong></span>
+                      <span>Sale de: <strong>{currentEquipment.nombre_servicio_propietario.replace('Taller Bioingeniería / Mantenimiento', 'Taller / Mantenimiento')}</strong></span>
                     </div>
                   </div>
                 </div>
@@ -214,7 +220,7 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Buscá por N° de equipo (ej. 14) o serie de fábrica..."
+                    placeholder="Buscá por código (ej. #09, R-01), serie o modelo..."
                     value={equipmentSearch}
                     onChange={(e) => setEquipmentSearch(e.target.value)}
                     className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cpvs-blue/30 focus:border-cpvs-blue"
@@ -243,14 +249,14 @@ export const LoanModal: React.FC<LoanModalProps> = ({
                           <span className={`px-2 py-0.5 rounded font-mono font-bold text-[11px] ${
                             selectedEquipmentId === eq.id_equipo ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800'
                           }`}>
-                            #{eq.numero_sticker || 'S/N'}
+                            {formatEquipmentCode(eq.numero_sticker)}
                           </span>
                           <span className="truncate">{eq.nombre_articulo}</span>
                         </div>
                         <span className={`font-mono text-[10px] shrink-0 ${
                           selectedEquipmentId === eq.id_equipo ? 'text-white/80' : 'text-slate-400'
                         }`}>
-                          {eq.nombre_servicio_propietario}
+                          {eq.nombre_servicio_propietario.replace('Taller Bioingeniería / Mantenimiento', 'Taller / Mantenimiento')}
                         </span>
                       </button>
                     ))

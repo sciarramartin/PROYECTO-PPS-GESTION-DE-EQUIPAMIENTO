@@ -154,7 +154,7 @@ cur.executemany('INSERT INTO depositos (id_depositos, nombre) VALUES (?, ?)', [
     (3, 'Neonatología (UTIN)'),
     (4, 'Quirófanos Centrales'),
     (5, 'Guardia Central y Shockroom'),
-    (6, 'Taller Bioingeniería / Mantenimiento'),
+    (6, 'Taller / Mantenimiento'),
     (7, 'Oncología y Quimioterapia'),
 ])
 
@@ -205,7 +205,7 @@ servicios_ubic = [
     (3, 'Neonatología UTIN', 'SERVICIO', 'Planta 2', 3),
     (4, 'Quirófanos Centrales', 'SERVICIO', 'Subsuelo', 4),
     (5, 'Guardia Central y Shockroom', 'SERVICIO', 'Planta Baja', 5),
-    (6, 'Taller Bioingeniería / Service', 'TALLER', 'Subsuelo Técnico', 6),
+    (6, 'Taller / Mantenimiento', 'TALLER', 'Subsuelo Técnico', 6),
     (7, 'Oncología y Quimioterapia', 'SERVICIO', 'Planta 3', 7),
 ]
 for su in servicios_ubic:

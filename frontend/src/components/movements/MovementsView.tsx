@@ -17,6 +17,12 @@ import {
 import { Movement, Equipment } from '../../types';
 import { api } from '../../services/api';
 
+const formatEquipmentCode = (sticker: string | null | undefined): string => {
+  if (!sticker) return '—';
+  if (sticker.startsWith('R-') || sticker.startsWith('B-') || sticker.startsWith('#')) return sticker;
+  return /^\d+$/.test(sticker) ? `#${sticker.padStart(2, '0')}` : sticker;
+};
+
 interface MovementsViewProps {
   onOpenLoanModal: (eq?: Equipment) => void;
   onOpenReturnModal: (eq: Equipment) => void;
@@ -197,7 +203,7 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px] whitespace-nowrap">
-                      <th className="py-3 px-4 text-center w-24">N° Equipo</th>
+                      <th className="py-3 px-4 text-center w-28">N° / Código</th>
                       <th className="py-3 px-4">Equipo Biomédico</th>
                       <th className="py-3 px-4">Cama / Habitación Asignada</th>
                       <th className="py-3 px-4">Servicio Base (Origen)</th>
@@ -210,8 +216,8 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
                     {filteredActive.map((mov) => (
                       <tr key={mov.id_movimiento} className="hover:bg-slate-50/70 transition-colors">
                         <td className="py-3 px-4 text-center whitespace-nowrap">
-                          <span className="inline-block px-2.5 py-0.5 rounded-md font-mono font-black text-sm bg-slate-900 text-white shadow-2xs">
-                            #{mov.numero_sticker || '—'}
+                          <span className="inline-block px-2.5 py-0.5 rounded-md font-mono font-bold text-xs bg-slate-900 text-white shadow-2xs">
+                            {formatEquipmentCode(mov.numero_sticker)}
                           </span>
                         </td>
 
@@ -263,53 +269,48 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
                 </table>
               </div>
 
-              {/* VISTA MOBILE: TARJETAS TÁCTILES LIMPIAS */}
-              <div className="lg:hidden p-3 sm:p-4 space-y-3 bg-slate-50/50">
+              {/* VISTA MOBILE: LISTA COMPACTA CON BOTÓN A LA DERECHA */}
+              <div className="lg:hidden divide-y divide-slate-100 bg-white">
                 {filteredActive.map((mov) => (
                   <div 
                     key={mov.id_movimiento}
-                    className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-2.5"
+                    className="p-3 sm:p-3.5 flex items-center justify-between gap-2.5 hover:bg-slate-50/80 transition-colors"
                   >
-                    {/* Fila 1: N° Equipo + Nombre */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono font-black text-sm bg-slate-900 text-white shadow-2xs shrink-0">
-                          #{mov.numero_sticker || '—'}
-                        </span>
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                    {/* Izquierda: Código + Nombre + Ubicación */}
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <span className="inline-flex items-center justify-center px-2 py-1 rounded-lg font-mono font-bold text-xs bg-slate-900 text-white shadow-2xs shrink-0">
+                        {formatEquipmentCode(mov.numero_sticker)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-xs font-bold text-slate-900 truncate">
                             {mov.nombre_articulo}
                           </h4>
-                          <span className="text-[10px] font-mono text-slate-400">
-                            SN: {mov.numero_serie}
+                          <span className="inline-flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded text-[10px] border border-amber-200/60 whitespace-nowrap">
+                            <Clock className="w-2.5 h-2.5 text-amber-600" />
+                            {getUsageHours(mov.fecha_salida)}
                           </span>
                         </div>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 mt-0.5 truncate">
+                          <MapPin className="w-3 h-3 text-cpvs-cyan shrink-0" />
+                          <span className="truncate">Cama: <strong>{mov.nombre_ubicacion_destino}</strong></span>
+                          <span className="text-slate-300">•</span>
+                          <span className="text-[10px] text-slate-400 shrink-0">Base: {mov.nombre_ubicacion_origen}</span>
+                        </div>
                       </div>
-                      <span className="inline-flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] border border-amber-200/60 whitespace-nowrap">
-                        <Clock className="w-2.5 h-2.5 text-amber-600" />
-                        {getUsageHours(mov.fecha_salida)}
-                      </span>
                     </div>
 
-                    {/* Fila 2: Cama Asignada */}
-                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 text-slate-700 font-medium truncate">
-                        <MapPin className="w-3.5 h-3.5 text-cpvs-cyan shrink-0" />
-                        <span className="truncate">Cama: <strong>{mov.nombre_ubicacion_destino}</strong></span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 shrink-0 ml-1">
-                        Base: {mov.nombre_ubicacion_origen}
-                      </span>
+                    {/* Derecha: Botón Directo de Reingreso Sanitario */}
+                    <div className="shrink-0">
+                      <button
+                        onClick={() => handleReturnClick(mov)}
+                        className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-white bg-cpvs-blue hover:bg-blue-700 active:scale-95 transition-all shadow-2xs flex items-center gap-1 cursor-pointer"
+                        title="Reingreso Sanitario con LT8"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                        <span>Reingreso</span>
+                      </button>
                     </div>
-
-                    {/* Fila 3: Botón Grande Táctil de Reingreso */}
-                    <button
-                      onClick={() => handleReturnClick(mov)}
-                      className="w-full py-2.5 px-3 rounded-lg bg-cpvs-blue hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs active:scale-98 transition-all cursor-pointer"
-                    >
-                      <ShieldCheck className="w-4 h-4 text-emerald-300" />
-                      <span>Reingreso Sanitario con LT8</span>
-                    </button>
                   </div>
                 ))}
               </div>
@@ -336,7 +337,7 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px] whitespace-nowrap">
-                    <th className="py-3 px-4 text-center w-20">N° Equipo</th>
+                    <th className="py-3 px-4 text-center w-28">N° / Código</th>
                     <th className="py-3 px-4">Equipo Biomédico</th>
                     <th className="py-3 px-4">Habitación de donde volvió</th>
                     <th className="py-3 px-4">Devuelto a (Servicio Base)</th>
@@ -350,7 +351,7 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
                     <tr key={mov.id_movimiento} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3 px-4 text-center whitespace-nowrap">
                         <span className="inline-block px-2.5 py-0.5 rounded-md font-mono font-bold text-xs bg-slate-100 text-slate-800">
-                          #{mov.numero_sticker || '—'}
+                          {formatEquipmentCode(mov.numero_sticker)}
                         </span>
                       </td>
 

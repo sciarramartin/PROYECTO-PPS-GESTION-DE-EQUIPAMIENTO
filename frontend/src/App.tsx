@@ -134,7 +134,7 @@ export const App: React.FC = () => {
               </span>
               <span className="text-xs text-slate-300">•</span>
               <span className="text-xs text-slate-500 font-medium">
-                Gestión Centralizada y Trazabilidad
+                Gestión y Trazabilidad
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">

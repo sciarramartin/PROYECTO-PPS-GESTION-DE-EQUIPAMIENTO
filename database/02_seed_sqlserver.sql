@@ -34,7 +34,7 @@ IF NOT EXISTS (SELECT 1 FROM [dbo].[depositos] WHERE [id_depositos] = 4)
 IF NOT EXISTS (SELECT 1 FROM [dbo].[depositos] WHERE [id_depositos] = 5)
     INSERT INTO [dbo].[depositos] ([id_depositos], [nombre]) VALUES (5, 'Guardia Central y Shockroom');
 IF NOT EXISTS (SELECT 1 FROM [dbo].[depositos] WHERE [id_depositos] = 6)
-    INSERT INTO [dbo].[depositos] ([id_depositos], [nombre]) VALUES (6, 'Taller Bioingeniería / Mantenimiento');
+    INSERT INTO [dbo].[depositos] ([id_depositos], [nombre]) VALUES (6, 'Taller / Mantenimiento');
 IF NOT EXISTS (SELECT 1 FROM [dbo].[depositos] WHERE [id_depositos] = 7)
     INSERT INTO [dbo].[depositos] ([id_depositos], [nombre]) VALUES (7, 'Oncología y Quimioterapia');
 SET IDENTITY_INSERT [dbo].[depositos] OFF;

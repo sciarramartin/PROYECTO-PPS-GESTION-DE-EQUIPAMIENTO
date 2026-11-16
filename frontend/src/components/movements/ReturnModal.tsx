@@ -10,6 +10,12 @@ interface ReturnModalProps {
   onSuccess: (message: string) => void;
 }
 
+const formatEquipmentCode = (sticker: string | null | undefined): string => {
+  if (!sticker) return '—';
+  if (sticker.startsWith('R-') || sticker.startsWith('B-') || sticker.startsWith('#')) return sticker;
+  return /^\d+$/.test(sticker) ? `#${sticker.padStart(2, '0')}` : sticker;
+};
+
 export const ReturnModal: React.FC<ReturnModalProps> = ({
   isOpen,
   onClose,
@@ -110,8 +116,8 @@ export const ReturnModal: React.FC<ReturnModalProps> = ({
           <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded font-mono font-bold text-xs bg-slate-800 text-white">
-                  #{equipment.numero_sticker || 'S/N'}
+                <span className="px-2.5 py-0.5 rounded font-mono font-bold text-xs bg-slate-800 text-white shadow-2xs">
+                  {formatEquipmentCode(equipment.numero_sticker)}
                 </span>
                 <span className="font-bold text-slate-900 text-xs sm:text-sm">{equipment.nombre_articulo}</span>
               </div>
@@ -131,7 +137,7 @@ export const ReturnModal: React.FC<ReturnModalProps> = ({
                 <span className="text-[11px] text-slate-400 block font-medium">Servicio Destino (Restitución):</span>
                 <div className="flex items-center gap-1 text-slate-700 font-semibold mt-0.5">
                   <Building className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="truncate">{equipment.nombre_servicio_propietario}</span>
+                  <span className="truncate">{equipment.nombre_servicio_propietario.replace('Taller Bioingeniería / Mantenimiento', 'Taller / Mantenimiento')}</span>
                 </div>
               </div>
             </div>

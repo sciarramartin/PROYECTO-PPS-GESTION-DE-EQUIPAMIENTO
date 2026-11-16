@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Buscar por N° Equipo o N° de Serie..."
+                  placeholder="Buscar por código (ej. #09, R-01), serie..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -153,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative">
               <input
                 type="text"
-                placeholder="Buscar por N° Equipo o N° Serie..."
+                placeholder="Buscar por código (ej. #09, R-01), serie..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
