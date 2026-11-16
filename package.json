@@ -1,0 +1,25 @@
+{
+  "name": "proyecto-pps-gestion-de-equipamiento",
+  "version": "1.0.0",
+  "description": "Sistema de Gestión, Trazabilidad y Bioseguridad de Equipamiento Biomédico - Clínica Privada Vélez Sarsfield (UTN FRC)",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "seed": "python database/seed_sqlite.py"
+  },
+  "keywords": [
+    "pps",
+    "utn-frc",
+    "biomedico",
+    "clinica-velez-sarsfield",
+    "react",
+    "express",
+    "sqlite",
+    "sql-server"
+  ],
+  "author": "Martín Sciarra (Legajo 69650 - UTN FRC)",
+  "license": "ISC"
+}
