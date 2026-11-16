@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   body {
     @apply bg-cpvs-ice text-cpvs-text;
     -webkit-tap-highlight-color: transparent;

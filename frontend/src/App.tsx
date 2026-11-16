@@ -124,7 +124,7 @@ export const App: React.FC = () => {
       />
 
       {/* Contenido Principal */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6 pb-28 md:pb-12">
         {/* Encabezado de Página Editorial */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-1">
           <div>
@@ -145,14 +145,14 @@ export const App: React.FC = () => {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            {/* Botón Asignar Equipo a Sala */}
+          <div className="flex items-center gap-2.5 self-start sm:self-auto">
+            {/* Botón Principal Destacado: Asignar Equipo a Sala */}
             <button
               onClick={() => handleOpenLoan()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-cpvs-blue via-blue-600 to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
               title="Asignar y trasladar equipo a una habitación"
             >
-              <Zap className="w-3.5 h-3.5 text-amber-300" />
+              <Zap className="w-4 h-4 text-amber-300" />
               <span>+ Asignar a Sala</span>
             </button>
 
@@ -160,11 +160,11 @@ export const App: React.FC = () => {
             <button
               onClick={loadData}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-50 hover:text-cpvs-blue transition-all shadow-2xs active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-50 hover:text-cpvs-blue transition-all shadow-2xs active:scale-95 cursor-pointer"
               title="Sincronizar datos con la base de datos"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cpvs-blue' : ''}`} />
-              <span>Sincronizar</span>
+              <span className="hidden sm:inline">Sincronizar</span>
             </button>
           </div>
         </div>
@@ -232,6 +232,18 @@ export const App: React.FC = () => {
 
       {/* Footer Oficial */}
       <Footer />
+
+      {/* BOTÓN FLOTANTE (FAB) PARA MÓVIL (F12) */}
+      <div className="md:hidden fixed bottom-16 right-4 z-40">
+        <button
+          onClick={() => handleOpenLoan()}
+          className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-cpvs-blue to-cpvs-cyan text-white font-bold text-xs rounded-full shadow-2xl active:scale-90 transition-all border-2 border-white cursor-pointer"
+          title="Asignar equipo a sala"
+        >
+          <Zap className="w-4 h-4 text-amber-300" />
+          <span>Asignar a Sala</span>
+        </button>
+      </div>
 
       {/* Modales de Flujos Operativos */}
       <LoanModal

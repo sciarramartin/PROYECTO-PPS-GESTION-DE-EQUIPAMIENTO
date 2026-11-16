@@ -106,28 +106,28 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
     switch (status) {
       case 'DISPONIBLE':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             Disponible
           </span>
         );
       case 'EN_USO':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/80 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
             En Paciente
           </span>
         );
       case 'EN_MANTENIMIENTO':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
             En Taller
           </span>
         );
       case 'DE_BAJA':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200/80 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
             De Baja
           </span>
@@ -179,14 +179,14 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
         </div>
 
         {/* Controles de Filtrado en Fila */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
             {/* 1. Selector de Familia / Categoría */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue cursor-pointer transition-all"
+                className="w-full sm:w-auto appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue cursor-pointer transition-all"
               >
                 <option value="ALL">Todas las Familias ({equipment.length})</option>
                 {uniqueCategories.map(c => (
@@ -199,11 +199,11 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
             </div>
 
             {/* 2. Selector de Estado Operativo */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue cursor-pointer transition-all"
+                className="w-full sm:w-auto appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue cursor-pointer transition-all"
               >
                 <option value="ALL">Todos los Estados</option>
                 <option value="DISPONIBLE">● Disponibles</option>
@@ -214,11 +214,11 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
             </div>
 
             {/* 3. Selector de Servicio Propietario */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={selectedService}
                 onChange={(e) => setSelectedService(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue cursor-pointer transition-all max-w-[180px] truncate"
+                className="w-full sm:w-auto appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue cursor-pointer transition-all truncate"
               >
                 <option value="ALL">Todos los Servicios</option>
                 {uniqueServices.map(svc => (
@@ -230,13 +230,13 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
           </div>
 
           {/* Buscador Integrado */}
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <input
               type="text"
               placeholder="Filtrar por serie, sticker..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-7 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-48 sm:w-56"
+              className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all sm:w-56"
             />
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
             {searchQuery && (
@@ -392,7 +392,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px]">
+            <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px] whitespace-nowrap">
               <th className="py-3 px-4 text-center w-24">N° Equipo</th>
               <th className="py-3 px-4">Equipo Biomédico</th>
               <th className="py-3 px-4">N° Serie</th>
@@ -426,32 +426,27 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
                     {item.nombre_articulo}
                   </td>
 
-                  <td className="py-3 px-4 font-mono text-slate-500">
+                  <td className="py-3 px-4 font-mono text-slate-600 whitespace-nowrap">
                     {item.numero_serie}
                   </td>
 
-                  <td className="py-3 px-4 text-slate-600">
+                  <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
                     {item.nombre_servicio_propietario}
                   </td>
 
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-4 whitespace-nowrap">
                     <div className="flex items-center gap-1.5 text-slate-800 font-medium">
                       <MapPin className="w-3.5 h-3.5 text-cpvs-cyan shrink-0" />
                       <span>{item.nombre_ubicacion_actual}</span>
-                      {item.sector_piso && (
-                        <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.2 rounded font-normal">
-                          {item.sector_piso}
-                        </span>
-                      )}
                     </div>
                   </td>
 
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-3 px-4 text-center whitespace-nowrap">
                     {getStatusBadge(item.estado_operativo)}
                   </td>
 
                   {/* Acciones Directas en Fila (Heurística 7: Eficiencia de Uso) */}
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-3 px-4 text-center whitespace-nowrap">
                     {item.estado_operativo === 'DISPONIBLE' && (
                       <button
                         onClick={() => onOpenLoanModal?.(item)}

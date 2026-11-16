@@ -67,7 +67,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Anillo de Progreso + Títulos */}
           <div className="flex items-center gap-5">
-            {/* SVG Ring Progress */}
+            {/* SVG Ring Progress Principal */}
             <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
               <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 36 36">
                 <path
@@ -157,7 +157,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
       </div>
 
       {/* ======================================================== */}
-      {/* 2. TIPOS DE EQUIPOS                                      */}
+      {/* 2. TIPOS DE EQUIPOS CON INDICADORES CIRCULARES            */}
       {/* ======================================================== */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -178,8 +178,6 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categorias.map((cat) => {
             const ratioLibres = cat.total > 0 ? Math.round((cat.disponibles / cat.total) * 100) : 0;
-            const ratioUso = cat.total > 0 ? Math.round((cat.en_uso / cat.total) * 100) : 0;
-            const ratioTaller = cat.total > 0 ? Math.round((cat.en_mantenimiento / cat.total) * 100) : 0;
 
             return (
               <div
@@ -187,34 +185,45 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
                 onClick={() => onFilterCategory?.(cat.categoria)}
                 className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-2xs hover:shadow-md hover:border-cpvs-blue/50 transition-all cursor-pointer group flex flex-col justify-between"
               >
-                <div>
-                  {/* Encabezado de la Categoría */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
-                        {getCategoryIcon(cat.categoria)}
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-cpvs-blue transition-colors">
-                          {cat.nombre_display}
-                        </h4>
-                        <span className="text-[11px] text-slate-400 font-mono">
-                          {cat.total} unidades en total
-                        </span>
-                      </div>
+                {/* Encabezado con Indicador Circular SVG */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors">
+                      {getCategoryIcon(cat.categoria)}
                     </div>
-                    <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
-                      {ratioLibres}% libre
-                    </span>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-cpvs-blue transition-colors">
+                        {cat.nombre_display}
+                      </h4>
+                      <span className="text-xs text-slate-400 font-mono">
+                        {cat.total} equipos en total
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Barra de progreso de la categoría */}
-                  <div className="mt-3.5 space-y-1">
-                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden flex">
-                      <div className="bg-emerald-500 h-full" style={{ width: `${ratioLibres}%` }} />
-                      <div className="bg-blue-500 h-full" style={{ width: `${ratioUso}%` }} />
-                      <div className="bg-amber-500 h-full" style={{ width: `${ratioTaller}%` }} />
-                    </div>
+                  {/* Mini Anillo Circular SVG (Heurística visual solicitada) */}
+                  <div className="relative w-12 h-12 shrink-0 flex items-center justify-center">
+                    <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        className="text-slate-100"
+                        strokeWidth="3.5"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                        className="text-emerald-500 transition-all duration-500 ease-out"
+                        strokeDasharray={`${ratioLibres}, 100`}
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center font-mono font-bold text-[10px] text-slate-800">
+                      {ratioLibres}%
+                    </span>
                   </div>
                 </div>
 

@@ -58,19 +58,19 @@ export const LocationList: React.FC<LocationListProps> = ({ locations }) => {
         </div>
 
         {/* Filtros de Tipo y Buscador */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+          <div className="relative w-full sm:w-auto">
             <input
               type="text"
               placeholder="Buscar destino..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-40 sm:w-48"
+              className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all sm:w-48"
             />
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
           </div>
 
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80 overflow-x-auto max-w-full">
             {[
               { id: 'ALL', label: `Todas (${locations.length})` },
               { id: 'SERVICIO', label: `Servicios (${countServicios})` },
@@ -80,7 +80,7 @@ export const LocationList: React.FC<LocationListProps> = ({ locations }) => {
               <button
                 key={f.id}
                 onClick={() => setFilterType(f.id)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                   filterType === f.id
                     ? 'bg-white text-cpvs-blue shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'

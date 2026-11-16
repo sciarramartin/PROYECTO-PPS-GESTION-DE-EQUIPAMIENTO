@@ -80,19 +80,19 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
     );
   }, [historyMovements, searchFilter]);
 
-  // Calcular tiempo transcurrido amigable
-  const getTimeElapsed = (fechaSalida: string) => {
+  // Calcular horas de uso en sala
+  const getUsageHours = (fechaSalida: string) => {
     const salida = new Date(fechaSalida).getTime();
     const ahora = Date.now();
     const diffMs = ahora - salida;
     const diffHs = Math.floor(diffMs / (1000 * 60 * 60));
 
-    if (diffHs < 1) return 'Menos de 1 hora';
-    if (diffHs === 1) return 'Hace 1 hora';
-    if (diffHs < 24) return `Hace ${diffHs} horas`;
+    if (diffHs < 1) return '< 1 hora de uso';
+    if (diffHs === 1) return '1 hora de uso';
+    if (diffHs < 24) return `${diffHs} hs de uso`;
     const dias = Math.floor(diffHs / 24);
     const restoHs = diffHs % 24;
-    return `${dias}d ${restoHs}h en sala`;
+    return `${dias}d ${restoHs}hs en sala`;
   };
 
   const handleReturnClick = (mov: Movement) => {
@@ -107,35 +107,35 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
       {/* ======================================================== */}
       {/* ENCABEZADO Y SELECTOR DE SOLAPAS                         */}
       {/* ======================================================== */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-cpvs-blue" />
             <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-              Control de Traslados y Préstamos a Salas
+              Control de Traslados a Salas y Devoluciones
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-            Monitoreo en vivo de equipos operando en camas de pacientes e historial inmutable de devoluciones.
+            Equipos actualmente en uso con pacientes y registro de devoluciones con bioseguridad LT8.
           </p>
         </div>
 
-        {/* Botón Nuevo Traslado */}
+        {/* Botón Principal Destacado */}
         <button
           onClick={() => onOpenLoanModal()}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer self-start md:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer w-full md:w-auto"
         >
-          <Zap className="w-3.5 h-3.5 text-amber-300" />
+          <Zap className="w-4 h-4 text-amber-300" />
           <span>+ Asignar Equipo a Sala</span>
         </button>
       </div>
 
-      {/* Selector de Solapas (Segmented Control) */}
+      {/* Selector de Solapas y Buscador */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="inline-flex rounded-xl bg-slate-200/70 p-1 border border-slate-200 shadow-inner">
+        <div className="inline-flex rounded-xl bg-slate-200/70 p-1 border border-slate-200 shadow-inner w-full sm:w-auto">
           <button
             onClick={() => setSubTab('activos')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               subTab === 'activos'
                 ? 'bg-white text-cpvs-blue shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -151,7 +151,7 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
 
           <button
             onClick={() => setSubTab('historial')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               subTab === 'historial'
                 ? 'bg-white text-cpvs-blue shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -163,13 +163,13 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
         </div>
 
         {/* Buscador de Movimientos */}
-        <div className="relative">
+        <div className="relative w-full sm:w-64">
           <input
             type="text"
             placeholder={subTab === 'activos' ? 'Buscar por equipo, sala...' : 'Buscar en historial...'}
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue transition-all w-full sm:w-64 shadow-2xs"
+            className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue transition-all shadow-2xs"
           />
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
         </div>
@@ -182,90 +182,144 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
           {loading ? (
             <div className="py-16 text-center text-xs text-slate-400">
-              Cargando préstamos activos...
+              Cargando equipos en sala...
             </div>
           ) : filteredActive.length === 0 ? (
             <div className="py-16 text-center space-y-2">
               <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
               <p className="text-sm font-bold text-slate-800">No hay traslados activos coincidentes</p>
-              <p className="text-xs text-slate-500">Todos los equipos están en sus depósitos base o no coinciden con la búsqueda.</p>
+              <p className="text-xs text-slate-500">Todos los equipos están libres en sus depósitos base.</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
-              {filteredActive.map((mov) => (
-                <div 
-                  key={mov.id_movimiento}
-                  className="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:bg-slate-50/70 transition-colors"
-                >
-                  {/* Bloque 1: Equipo */}
-                  <div className="flex items-start gap-3 min-w-[260px]">
-                    <div className="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-mono font-black text-lg shadow-2xs shrink-0 text-center min-w-[48px]">
-                      #{mov.numero_sticker || '—'}
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-900 leading-tight">
-                        {mov.nombre_articulo}
-                      </h4>
-                      <span className="text-[11px] font-mono text-slate-500 block mt-0.5">
-                        SN: {mov.numero_serie}
-                      </span>
-                      <div className="flex items-center gap-1 text-[11px] text-slate-400 mt-1">
-                        <Building className="w-3 h-3 text-slate-400" />
-                        <span>Base: {mov.nombre_ubicacion_origen}</span>
+            <>
+              {/* VISTA DESKTOP: TABLA CON ENCABEZADOS CLAROS (No repite etiquetas) */}
+              <div className="hidden lg:block overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px] whitespace-nowrap">
+                      <th className="py-3 px-4 text-center w-24">N° Equipo</th>
+                      <th className="py-3 px-4">Equipo Biomédico</th>
+                      <th className="py-3 px-4">Cama / Habitación Asignada</th>
+                      <th className="py-3 px-4">Servicio Base (Origen)</th>
+                      <th className="py-3 px-4">Horas de Uso en Sala</th>
+                      <th className="py-3 px-4">Enviado Por</th>
+                      <th className="py-3 px-4 text-center w-36">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredActive.map((mov) => (
+                      <tr key={mov.id_movimiento} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          <span className="inline-block px-2.5 py-0.5 rounded-md font-mono font-black text-sm bg-slate-900 text-white shadow-2xs">
+                            #{mov.numero_sticker || '—'}
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4">
+                          <span className="font-bold text-slate-900 block">{mov.nombre_articulo}</span>
+                          <span className="font-mono text-[10px] text-slate-500">SN: {mov.numero_serie}</span>
+                        </td>
+
+                        <td className="py-3 px-4 font-semibold text-cpvs-blue whitespace-nowrap">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-cpvs-cyan shrink-0" />
+                            <span>{mov.nombre_ubicacion_destino}</span>
+                          </div>
+                        </td>
+
+                        <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
+                          <div className="flex items-center gap-1">
+                            <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span>{mov.nombre_ubicacion_origen}</span>
+                          </div>
+                        </td>
+
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60 text-[11px]">
+                            <Clock className="w-3 h-3 text-amber-600 shrink-0" />
+                            <span>{getUsageHours(mov.fecha_salida)}</span>
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
+                          <div className="flex items-center gap-1 text-[11px]">
+                            <User className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span>{mov.nombre_usuario_envia || 'Supervisor Guardia'}</span>
+                          </div>
+                        </td>
+
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          <button
+                            onClick={() => handleReturnClick(mov)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-cpvs-blue hover:bg-blue-700 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                          >
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                            <span>Reingreso (LT8)</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* VISTA MOBILE: TARJETAS TÁCTILES LIMPIAS */}
+              <div className="lg:hidden p-3 sm:p-4 space-y-3 bg-slate-50/50">
+                {filteredActive.map((mov) => (
+                  <div 
+                    key={mov.id_movimiento}
+                    className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-2.5"
+                  >
+                    {/* Fila 1: N° Equipo + Nombre */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono font-black text-sm bg-slate-900 text-white shadow-2xs shrink-0">
+                          #{mov.numero_sticker || '—'}
+                        </span>
+                        <div>
+                          <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                            {mov.nombre_articulo}
+                          </h4>
+                          <span className="text-[10px] font-mono text-slate-400">
+                            SN: {mov.numero_serie}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Bloque 2: Destino Actual en Sala */}
-                  <div className="min-w-[220px]">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                      Ubicación Actual en Cama
-                    </span>
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-cpvs-blue mt-0.5">
-                      <MapPin className="w-4 h-4 text-cpvs-cyan shrink-0" />
-                      <span>{mov.nombre_ubicacion_destino}</span>
-                    </div>
-                    {mov.sector_piso_destino && (
-                      <span className="text-[11px] text-slate-500 block mt-0.5">
-                        {mov.sector_piso_destino}
+                      <span className="inline-flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] border border-amber-200/60 whitespace-nowrap">
+                        <Clock className="w-2.5 h-2.5 text-amber-600" />
+                        {getUsageHours(mov.fecha_salida)}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Bloque 3: Auditoría de Salida y Tiempo */}
-                  <div className="min-w-[190px] text-xs">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                      Tiempo Conectado
-                    </span>
-                    <div className="flex items-center gap-1.5 text-slate-700 font-semibold mt-0.5">
-                      <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>{getTimeElapsed(mov.fecha_salida)}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] text-slate-500 mt-0.5">
-                      <User className="w-3 h-3 text-slate-400" />
-                      <span className="truncate max-w-[170px]">{mov.nombre_usuario_envia || 'Supervisor Guardia'}</span>
-                    </div>
-                  </div>
 
-                  {/* Bloque 4: Botón de Retorno con LT8 */}
-                  <div className="flex items-center justify-end">
+                    {/* Fila 2: Cama Asignada */}
+                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 text-slate-700 font-medium truncate">
+                        <MapPin className="w-3.5 h-3.5 text-cpvs-cyan shrink-0" />
+                        <span className="truncate">Cama: <strong>{mov.nombre_ubicacion_destino}</strong></span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 shrink-0 ml-1">
+                        Base: {mov.nombre_ubicacion_origen}
+                      </span>
+                    </div>
+
+                    {/* Fila 3: Botón Grande Táctil de Reingreso */}
                     <button
                       onClick={() => handleReturnClick(mov)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-cpvs-blue hover:bg-blue-700 shadow-xs hover:shadow active:scale-95 transition-all cursor-pointer"
+                      className="w-full py-2.5 px-3 rounded-lg bg-cpvs-blue hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs active:scale-98 transition-all cursor-pointer"
                     >
                       <ShieldCheck className="w-4 h-4 text-emerald-300" />
-                      <span>Reingreso (LT8)</span>
+                      <span>Reingreso Sanitario con LT8</span>
                     </button>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
 
       {/* ======================================================== */}
-      {/* SOLAPA 2: HISTORIAL DE DEVOLUCIONES Y SANITIZACIONES     */}
+      {/* SOLAPA 2: HISTORIAL DE DEVOLUCIONES                      */}
       {/* ======================================================== */}
       {subTab === 'historial' && (
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
@@ -281,49 +335,55 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px]">
+                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px] whitespace-nowrap">
                     <th className="py-3 px-4 text-center w-20">N° Equipo</th>
                     <th className="py-3 px-4">Equipo Biomédico</th>
-                    <th className="py-3 px-4">Retornó Desde</th>
-                    <th className="py-3 px-4">Servicio Restituido</th>
-                    <th className="py-3 px-4">Fecha y Hora Retorno</th>
-                    <th className="py-3 px-4 text-center">Sanitización LT8</th>
-                    <th className="py-3 px-4">Recibió</th>
+                    <th className="py-3 px-4">Habitación de donde volvió</th>
+                    <th className="py-3 px-4">Devuelto a (Servicio Base)</th>
+                    <th className="py-3 px-4">Fecha de Devolución</th>
+                    <th className="py-3 px-4 text-center">Protocolo LT8</th>
+                    <th className="py-3 px-4">Recibido por</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredHistory.map((mov) => (
                     <tr key={mov.id_movimiento} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3 px-4 text-center whitespace-nowrap">
                         <span className="inline-block px-2.5 py-0.5 rounded-md font-mono font-bold text-xs bg-slate-100 text-slate-800">
                           #{mov.numero_sticker || '—'}
                         </span>
                       </td>
 
-                      <td className="py-3 px-4 font-semibold text-slate-900">
-                        {mov.nombre_articulo}
-                        <span className="block font-mono text-[10px] text-slate-400 font-normal">
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <span className="font-semibold text-slate-900 block">{mov.nombre_articulo}</span>
+                        <span className="font-mono text-[10px] text-slate-400">
                           SN: {mov.numero_serie}
                         </span>
                       </td>
 
-                      <td className="py-3 px-4 text-slate-700">
-                        {mov.nombre_ubicacion_destino}
+                      <td className="py-3 px-4 text-slate-700 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                          <span>{mov.nombre_ubicacion_destino}</span>
+                        </div>
                       </td>
 
-                      <td className="py-3 px-4 text-slate-700 font-medium">
-                        {mov.nombre_ubicacion_origen}
+                      <td className="py-3 px-4 text-slate-700 font-medium whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <Building className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span>{mov.nombre_ubicacion_origen}</span>
+                        </div>
                       </td>
 
-                      <td className="py-3 px-4 font-mono text-slate-600">
+                      <td className="py-3 px-4 font-mono text-slate-600 whitespace-nowrap">
                         {mov.fecha_retorno_real || '—'}
                       </td>
 
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3 px-4 text-center whitespace-nowrap">
                         {mov.desinfeccion_realizada ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>LT8 Conforme (5m)</span>
+                            <span>LT8 Conforme (5 min)</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500">
@@ -332,7 +392,7 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
                         )}
                       </td>
 
-                      <td className="py-3 px-4 text-slate-600">
+                      <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
                         {mov.nombre_usuario_recibe || 'Alejandra'}
                       </td>
                     </tr>

@@ -21,7 +21,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
       {/* Header del Directorio de Servicios */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Building className="w-5 h-5 text-cpvs-blue" />
@@ -36,17 +36,17 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
 
         {/* Buscador de Servicio */}
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <input
               type="text"
               placeholder="Buscar sector (ej. UTI, Quirófano)..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-48 sm:w-56"
+              className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all sm:w-56"
             />
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200/60 whitespace-nowrap">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200/60 whitespace-nowrap hidden sm:inline-block">
             {services.length} Sectores
           </span>
         </div>
@@ -66,9 +66,6 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
             const enTaller = svc.en_mantenimiento !== undefined ? svc.en_mantenimiento : (svc.bombas_taller + svc.respiradores_taller);
 
             const ratioLibres = total > 0 ? Math.round((libres / total) * 100) : 0;
-            const ratioUso = total > 0 ? Math.round((enUso / total) * 100) : 0;
-            const ratioTaller = total > 0 ? Math.round((enTaller / total) * 100) : 0;
-
             const hayEquipos = total > 0;
 
             return (
@@ -82,7 +79,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
                 }`}
               >
                 {/* Columna 1: Nombre de Servicio y Ubicación Real */}
-                <div className="min-w-[240px]">
+                <div className="min-w-[220px]">
                   <div className="flex items-center gap-2">
                     <h3 className="text-sm font-bold text-slate-900 group-hover:text-cpvs-blue transition-colors">
                       {svc.nombre_servicio}
@@ -94,45 +91,59 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
                   </div>
                 </div>
 
-                {/* Columna 2: Barra Proporcional de Disponibilidad */}
-                <div className="flex-1 max-w-xs space-y-1">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-500 font-medium">Disponibilidad</span>
-                    <span className="font-mono font-bold text-slate-700">
-                      {hayEquipos ? `${ratioLibres}% libre` : 'Sin equipos'}
+                {/* Columna 2: Indicador Circular SVG de Disponibilidad */}
+                <div className="flex items-center gap-3 min-w-[140px]">
+                  <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
+                    <svg className="w-10 h-10 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        className="text-slate-100"
+                        strokeWidth="3.5"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                        className="text-emerald-500 transition-all duration-500 ease-out"
+                        strokeDasharray={hayEquipos ? `${ratioLibres}, 100` : '0, 100'}
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center font-mono font-bold text-[9px] text-slate-800">
+                      {hayEquipos ? `${ratioLibres}%` : '0%'}
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
-                    {hayEquipos ? (
-                      <>
-                        <div className="bg-emerald-500 h-full" style={{ width: `${ratioLibres}%` }} title={`Libres: ${libres}`} />
-                        <div className="bg-blue-500 h-full" style={{ width: `${ratioUso}%` }} title={`En Paciente: ${enUso}`} />
-                        <div className="bg-amber-500 h-full" style={{ width: `${ratioTaller}%` }} title={`En Taller: ${enTaller}`} />
-                      </>
-                    ) : (
-                      <div className="bg-slate-200 h-full w-full" />
-                    )}
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Disponibilidad
+                    </span>
+                    <span className="text-xs font-semibold text-slate-700">
+                      {hayEquipos ? `${libres} libres de ${total}` : 'Sin equipos'}
+                    </span>
                   </div>
                 </div>
 
                 {/* Columna 3: Conteo Desglosado */}
                 <div className="flex items-center gap-4 text-xs font-mono">
-                  <div className="text-left min-w-[70px]">
+                  <div className="text-left min-w-[65px]">
                     <span className="text-[10px] text-slate-400 block font-sans">Total</span>
                     <span className="text-base font-bold text-slate-900">{total}</span>
                   </div>
 
-                  <div className="text-left min-w-[65px]">
+                  <div className="text-left min-w-[60px]">
                     <span className="text-[10px] text-emerald-600 block font-sans font-medium">Libres</span>
                     <span className="text-base font-bold text-emerald-700">{libres}</span>
                   </div>
 
-                  <div className="text-left min-w-[65px]">
+                  <div className="text-left min-w-[60px]">
                     <span className="text-[10px] text-blue-600 block font-sans font-medium">En Sala</span>
                     <span className="text-base font-bold text-blue-700">{enUso}</span>
                   </div>
 
-                  <div className="text-left min-w-[65px]">
+                  <div className="text-left min-w-[60px]">
                     <span className="text-[10px] text-amber-600 block font-sans font-medium">Taller</span>
                     <span className="text-base font-bold text-amber-700">{enTaller}</span>
                   </div>
@@ -150,7 +161,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
                     </button>
                   ) : (
                     <span className="text-[11px] text-slate-400 font-medium">
-                      Sin equipos
+                      Vacante
                     </span>
                   )}
                 </div>
