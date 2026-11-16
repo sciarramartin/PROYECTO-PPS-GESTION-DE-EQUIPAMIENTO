@@ -11,6 +11,7 @@ import {
   Filter
 } from 'lucide-react';
 import { Equipment, EstadoOperativo } from '../../types';
+import { Tooltip } from '../common/Tooltip';
 
 interface EquipmentTableProps {
   equipment: Equipment[];
@@ -29,6 +30,9 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
   onSelectEquipment
 }) => {
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
+
+  const countBombas = equipment.filter((e) => e.categoria === 'BOMBA_INFUSION').length;
+  const countResp = equipment.filter((e) => e.categoria === 'RESPIRADOR').length;
 
   // Filtrado reactivo en memoria
   const filteredEquipment = equipment.filter((item) => {
@@ -120,7 +124,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               }`}
             >
               <Syringe className="w-3 h-3 text-cpvs-cyan" />
-              Bombas (42)
+              Bombas ({countBombas})
             </button>
             <button
               onClick={() => setSelectedCategory('RESPIRADOR')}
@@ -131,7 +135,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               }`}
             >
               <Wind className="w-3 h-3 text-cpvs-cyan" />
-              Respiradores (22)
+              Respiradores ({countResp})
             </button>
           </div>
         </div>
@@ -215,12 +219,32 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-100/80 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px]">
-              <th className="py-2.5 px-3 text-center">Sticker</th>
+              <th className="py-2.5 px-3 text-center">
+                <span className="inline-flex items-center gap-1 justify-center">
+                  Sticker
+                  <Tooltip position="bottom" content="Identificador visible adherido al equipo para rápida lectura visual en sala." />
+                </span>
+              </th>
               <th className="py-2.5 px-3">Equipo / Modelo</th>
-              <th className="py-2.5 px-3">N° Serie Fábrica</th>
+              <th className="py-2.5 px-3">
+                <span className="inline-flex items-center gap-1">
+                  N° Serie Fábrica
+                  <Tooltip position="bottom" content="Número de serie unívoco e inmutable provisto por el fabricante." />
+                </span>
+              </th>
               <th className="py-2.5 px-3">Servicio Base</th>
-              <th className="py-2.5 px-3">Ubicación Actual en Vivo</th>
-              <th className="py-2.5 px-3 text-center">Estado</th>
+              <th className="py-2.5 px-3">
+                <span className="inline-flex items-center gap-1">
+                  Ubicación Actual
+                  <Tooltip position="bottom" content="Cama de internación, habitación o servicio clínico donde el equipo opera actualmente." />
+                </span>
+              </th>
+              <th className="py-2.5 px-3 text-center">
+                <span className="inline-flex items-center gap-1 justify-center">
+                  Estado
+                  <Tooltip position="bottom" content="Verde (Listo para usar), Azul (En paciente), Ámbar (En taller técnico)." />
+                </span>
+              </th>
               <th className="py-2.5 px-3 text-center">QR Token</th>
             </tr>
           </thead>

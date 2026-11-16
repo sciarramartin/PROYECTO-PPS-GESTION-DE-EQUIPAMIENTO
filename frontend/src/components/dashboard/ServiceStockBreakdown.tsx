@@ -1,6 +1,7 @@
 import React from 'react';
 import { Building, Syringe, Wind } from 'lucide-react';
 import { ServiceStockBreakdown } from '../../types';
+import { Tooltip } from '../common/Tooltip';
 
 interface ServiceStockBreakdownProps {
   services: ServiceStockBreakdown[];
@@ -19,6 +20,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
           <h2 className="text-sm font-bold text-slate-800 uppercase tracking-tight">
             Distribución por Servicio Base Propietario
           </h2>
+          <Tooltip position="right" content="Stock patrimonial asignado a cada área clínica (UTI, Neo, Quirófano, Pisos) para prevenir desabastecimiento." />
         </div>
         <span className="text-xs text-slate-500 font-medium">
           {services.length} Servicios Clínicos

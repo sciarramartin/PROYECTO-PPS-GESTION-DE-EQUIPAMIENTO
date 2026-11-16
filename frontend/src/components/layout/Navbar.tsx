@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, ShieldCheck, Search, Building2, Monitor } from 'lucide-react';
+import { Activity, User, Search, Building2, Monitor } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: 'dashboard' | 'equipos' | 'ubicaciones';
@@ -24,23 +24,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-cpvs-header">
-      {/* Barra Superior Informativa Institucional (Color Oficial #07599b) */}
-      <div className="bg-cpvs-blue text-white text-xs px-4 py-1.5 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-semibold tracking-wide">CLÍNICA PRIVADA VÉLEZ SARSFIELD</span>
-          <span className="hidden sm:inline text-blue-200">•</span>
-          <span className="hidden sm:inline text-blue-100">Sede Central: Naciones Unidas 984</span>
-        </div>
-        <div className="flex items-center space-x-3 text-blue-100">
-          <span className="flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-            <span className="hidden md:inline">Protocolo Bioseguridad LT8 Activo</span>
+      {/* Barra Superior con Sesión de Usuario (Color Oficial #07599b) */}
+      <div className="bg-cpvs-blue text-white text-xs px-4 sm:px-8 py-1 flex justify-end items-center">
+        <div className="flex items-center space-x-1.5 bg-white/10 px-2.5 py-0.5 rounded text-[11px]">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+          <User className="w-3.5 h-3.5 text-blue-200" />
+          <span className="font-semibold text-white tracking-wide">
+            Alejandra
           </span>
-          <span className="text-blue-300">|</span>
-          <span className="font-medium text-white bg-white/20 px-2 py-0.5 rounded text-[11px]">
-            Alejandra (Admin / Guardia 24/7)
-          </span>
+          <span className="text-blue-200 text-[10px] hidden sm:inline">(Admin / Guardia 24/7)</span>
         </div>
       </div>
 
