@@ -1,9 +1,9 @@
 import React from 'react';
-import { Activity, User, Search, Building2, Monitor } from 'lucide-react';
+import { Activity, User, Search, Building2, Monitor, ArrowLeftRight } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'dashboard' | 'equipos' | 'ubicaciones';
-  setActiveTab: (tab: 'dashboard' | 'equipos' | 'ubicaciones') => void;
+  activeTab: 'dashboard' | 'equipos' | 'traslados' | 'ubicaciones';
+  setActiveTab: (tab: 'dashboard' | 'equipos' | 'traslados' | 'ubicaciones') => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   onSearchSubmit: () => void;
@@ -64,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative">
               <input
                 type="text"
-                placeholder="Buscar por Sticker o N° de Serie..."
+                placeholder="Buscar por N° Equipo o N° de Serie..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -75,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {searchQuery ? (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="text-xs text-slate-400 hover:text-slate-600 bg-slate-200 hover:bg-slate-300 rounded-full w-4 h-4 flex items-center justify-center"
+                    className="text-xs text-slate-400 hover:text-slate-600 bg-slate-200 hover:bg-slate-300 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer"
                   >
                     ×
                   </button>
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <nav className="bg-slate-100/90 p-1 rounded-xl flex items-center gap-1 border border-slate-200/80 shadow-2xs">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'dashboard'
                   ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setActiveTab('equipos')}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'equipos'
                   ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
@@ -115,15 +115,27 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <button
+              onClick={() => setActiveTab('traslados')}
+              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === 'traslados'
+                  ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
+              }`}
+            >
+              <ArrowLeftRight className="w-4 h-4 text-cpvs-blue" />
+              <span>Traslados</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('ubicaciones')}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'ubicaciones'
                   ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
               }`}
             >
               <Building2 className="w-4 h-4 text-cpvs-blue" />
-              <span>Ubicaciones</span>
+              <span>Sectores</span>
             </button>
           </nav>
         </div>
@@ -133,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="relative">
             <input
               type="text"
-              placeholder="Buscar por Sticker o N° de Serie..."
+              placeholder="Buscar por N° Equipo o N° de Serie..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}

@@ -4,6 +4,7 @@ import { MetricCards } from './components/dashboard/MetricCards';
 import { ServiceStockBreakdownView } from './components/dashboard/ServiceStockBreakdown';
 import { EquipmentTable } from './components/equipment/EquipmentTable';
 import { LocationList } from './components/locations/LocationList';
+import { MovementsView } from './components/movements/MovementsView';
 import { Footer } from './components/layout/Footer';
 import { LoanModal } from './components/movements/LoanModal';
 import { ReturnModal } from './components/movements/ReturnModal';
@@ -11,10 +12,10 @@ import { LabelPrintModal } from './components/equipment/LabelPrintModal';
 import { Toast, ToastMessage } from './components/common/Toast';
 import { api } from './services/api';
 import { DashboardSummary, Equipment, Location } from './types';
-import { RefreshCw, AlertCircle, Zap, Tag } from 'lucide-react';
+import { RefreshCw, AlertCircle, Zap } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'equipos' | 'ubicaciones'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'equipos' | 'traslados' | 'ubicaciones'>('dashboard');
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -137,21 +138,22 @@ export const App: React.FC = () => {
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
-              {activeTab === 'dashboard' ? 'Tablero General de Control' :
-               activeTab === 'equipos' ? 'Inventario de Equipamiento Biomédico' :
-               'Catálogo Unificado de Destinos y Camas'}
+              {activeTab === 'dashboard' ? 'Tablero General' :
+               activeTab === 'equipos' ? 'Inventario de Equipos Biomédicos' :
+               activeTab === 'traslados' ? 'Traslados y Préstamos a Salas' :
+               'Catálogo de Sectores y Camas'}
             </h1>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
-            {/* Botón Acceso Rápido Préstamo (US-05) */}
+            {/* Botón Asignar Equipo a Sala */}
             <button
               onClick={() => handleOpenLoan()}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
-              title="Registrar préstamo rápido en 3 toques"
+              title="Asignar y trasladar equipo a una habitación"
             >
               <Zap className="w-3.5 h-3.5 text-amber-300" />
-              <span>+ Préstamo Rápido</span>
+              <span>+ Asignar a Sala</span>
             </button>
 
             {/* Sincronización */}
@@ -193,7 +195,7 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* Vista: Inventario Completo con Acciones de Préstamo, Retorno y Etiquetas (US-02, US-03, US-05, US-06, US-07) */}
+        {/* Vista: Inventario Completo (US-02, US-03, US-06) */}
         {activeTab === 'equipos' && (
           <div className="space-y-4">
             <EquipmentTable
@@ -205,6 +207,17 @@ export const App: React.FC = () => {
               onOpenLoanModal={handleOpenLoan}
               onOpenReturnModal={handleOpenReturn}
               onOpenLabelModal={handleOpenLabel}
+            />
+          </div>
+        )}
+
+        {/* Vista: Traslados y Préstamos a Salas (US-05, US-07) */}
+        {activeTab === 'traslados' && (
+          <div className="space-y-4">
+            <MovementsView
+              onOpenLoanModal={handleOpenLoan}
+              onOpenReturnModal={handleOpenReturn}
+              equipmentList={equipment}
             />
           </div>
         )}
@@ -242,6 +255,7 @@ export const App: React.FC = () => {
         onClose={() => setIsLabelModalOpen(false)}
         equipment={labelEquipment}
         batchEquipment={labelBatchEquipment}
+        allEquipment={equipment}
       />
 
       {/* Sistema de Notificaciones Reactivas Toast */}

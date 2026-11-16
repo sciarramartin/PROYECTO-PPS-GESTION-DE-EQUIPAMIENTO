@@ -173,7 +173,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-amber-300" />
-              <span>+ Préstamo Rápido</span>
+              <span>+ Asignar a Sala</span>
             </button>
           </div>
         </div>
@@ -353,7 +353,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
                     className="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-98 transition-all cursor-pointer"
                   >
                     <Zap className="w-3.5 h-3.5 text-amber-200" />
-                    <span>Prestar Equipo</span>
+                    <span>Asignar a Sala</span>
                   </button>
                 )}
 
@@ -393,7 +393,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-bold uppercase tracking-wider text-[11px]">
-              <th className="py-3 px-4 text-center w-20">Sticker</th>
+              <th className="py-3 px-4 text-center w-24">N° Equipo</th>
               <th className="py-3 px-4">Equipo Biomédico</th>
               <th className="py-3 px-4">N° Serie</th>
               <th className="py-3 px-4">Servicio Base</th>
@@ -456,10 +456,10 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
                       <button
                         onClick={() => onOpenLoanModal?.(item)}
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-[11px] border border-emerald-200/80 transition-all cursor-pointer shadow-2xs active:scale-95"
-                        title="Registrar préstamo rápido de este equipo a una sala"
+                        title="Asignar y trasladar este equipo a una sala"
                       >
                         <Zap className="w-3 h-3 text-emerald-600 group-hover:text-white" />
-                        <span>Prestar</span>
+                        <span>Asignar</span>
                       </button>
                     )}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Syringe, Wind, Activity, CheckCircle2, BedDouble, Wrench, ChevronRight, Layers } from 'lucide-react';
+import { Syringe, Wind, Activity, CheckCircle2, ChevronRight, Layers } from 'lucide-react';
 import { DashboardSummary, CategorySummary } from '../../types';
 
 interface MetricCardsProps {
@@ -11,10 +11,10 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
   if (!summary) {
     return (
       <div className="space-y-4 animate-pulse">
-        <div className="h-36 bg-slate-200 rounded-2xl"></div>
+        <div className="h-32 bg-slate-200 rounded-2xl"></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="h-44 bg-slate-200 rounded-xl"></div>
-          <div className="h-44 bg-slate-200 rounded-xl"></div>
+          <div className="h-40 bg-slate-200 rounded-xl"></div>
+          <div className="h-40 bg-slate-200 rounded-xl"></div>
         </div>
       </div>
     );
@@ -23,12 +23,6 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
   const { totales_globales } = summary;
   const pctLibres = totales_globales.total_equipos > 0 
     ? Math.round((totales_globales.disponibles / totales_globales.total_equipos) * 100) 
-    : 0;
-  const pctUso = totales_globales.total_equipos > 0 
-    ? Math.round((totales_globales.en_uso / totales_globales.total_equipos) * 100) 
-    : 0;
-  const pctTaller = totales_globales.total_equipos > 0 
-    ? Math.round((totales_globales.en_mantenimiento / totales_globales.total_equipos) * 100) 
     : 0;
 
   // Lista dinámica de categorías desde el backend o fallback estructurado
@@ -67,7 +61,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
   return (
     <div className="space-y-6">
       {/* ======================================================== */}
-      {/* 1. HERO DISPONIBILIDAD GLOBAL (Estilo Enterprise / SaaS) */}
+      {/* 1. RESUMEN GLOBAL (Limpio, directo y hospitalario)       */}
       {/* ======================================================== */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -107,11 +101,11 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Disponibilidad de Parque Biomédico
+                  Estado de los Equipos
                 </h2>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed max-w-md">
-                Estado operativo consolidado en tiempo real. Discriminación entre equipos listos para intubación/infusión, en sala y bajo servicio técnico.
+              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                Resumen de equipos listos para usar, en pacientes o en reparación técnica.
               </p>
             </div>
           </div>
@@ -119,11 +113,11 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
           {/* Cuatro Métricas Globales Integradas */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
             <div className="bg-slate-50/80 border border-slate-200/60 rounded-xl p-3">
-              <span className="text-[11px] font-medium text-slate-500 block">Total Parque</span>
+              <span className="text-[11px] font-medium text-slate-500 block">Total de Equipos</span>
               <span className="text-2xl font-black text-slate-900 font-mono tracking-tight">
                 {totales_globales.total_equipos}
               </span>
-              <span className="text-[10px] text-slate-400 block mt-0.5">unidades auditadas</span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">En toda la clínica</span>
             </div>
 
             <div className="bg-emerald-50/50 border border-emerald-100 rounded-xl p-3">
@@ -145,7 +139,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
               <span className="text-2xl font-black text-blue-700 font-mono tracking-tight">
                 {totales_globales.en_uso}
               </span>
-              <span className="text-[10px] text-blue-600 block mt-0.5">Uso activo en sala</span>
+              <span className="text-[10px] text-blue-600 block mt-0.5">Conectados en salas</span>
             </div>
 
             <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-3">
@@ -156,56 +150,28 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
               <span className="text-2xl font-black text-amber-700 font-mono tracking-tight">
                 {totales_globales.en_mantenimiento}
               </span>
-              <span className="text-[10px] text-amber-600 block mt-0.5">Mantenimiento</span>
+              <span className="text-[10px] text-amber-600 block mt-0.5">En reparación</span>
             </div>
-          </div>
-        </div>
-
-        {/* Barra de Distribución Proporcional Segmentada */}
-        <div className="mt-5 pt-4 border-t border-slate-100 space-y-1.5">
-          <div className="flex justify-between text-[11px] font-semibold text-slate-500">
-            <span>Distribución Proporcional de la Flota</span>
-            <span className="font-mono text-slate-700">
-              {pctLibres}% Libres • {pctUso}% En Paciente • {pctTaller}% En Taller
-            </span>
-          </div>
-          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
-            <div 
-              className="bg-emerald-500 h-full transition-all duration-500" 
-              style={{ width: `${pctLibres}%` }}
-              title={`Libres: ${totales_globales.disponibles} (${pctLibres}%)`}
-            />
-            <div 
-              className="bg-blue-500 h-full transition-all duration-500" 
-              style={{ width: `${pctUso}%` }}
-              title={`En Paciente: ${totales_globales.en_uso} (${pctUso}%)`}
-            />
-            <div 
-              className="bg-amber-500 h-full transition-all duration-500" 
-              style={{ width: `${pctTaller}%` }}
-              title={`En Taller: ${totales_globales.en_mantenimiento} (${pctTaller}%)`}
-            />
           </div>
         </div>
       </div>
 
       {/* ======================================================== */}
-      {/* 2. CATÁLOGO DINÁMICO DE FAMILIAS DE EQUIPOS              */}
-      {/*    (Extensible: soporta N categorías sin romper el UI)    */}
+      {/* 2. TIPOS DE EQUIPOS                                      */}
       {/* ======================================================== */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-cpvs-blue" />
             <h3 className="text-sm font-bold text-slate-800 uppercase tracking-tight">
-              Familias de Equipamiento Biomédico
+              Tipos de Equipos
             </h3>
             <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-              {categorias.length} Familias Activas
+              {categorias.length} Categorías
             </span>
           </div>
           <span className="text-[11px] text-slate-500 hidden sm:inline">
-            Hacé clic en cualquier tarjeta para filtrar el inventario
+            Hacé clic en cualquier tarjeta para ver esos equipos
           </span>
         </div>
 
@@ -233,7 +199,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ summary, onFilterCateg
                           {cat.nombre_display}
                         </h4>
                         <span className="text-[11px] text-slate-400 font-mono">
-                          {cat.total} unidades registradas
+                          {cat.total} unidades en total
                         </span>
                       </div>
                     </div>

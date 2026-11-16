@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building, MapPin, ArrowRight, ShieldAlert, CheckCircle2, BedDouble, Wrench, Search } from 'lucide-react';
+import { Building, MapPin, ArrowRight, Search } from 'lucide-react';
 import { ServiceStockBreakdown } from '../../types';
 
 interface ServiceStockBreakdownProps {
@@ -26,11 +26,11 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
           <div className="flex items-center gap-2">
             <Building className="w-5 h-5 text-cpvs-blue" />
             <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-              Directorio de Servicios y Dotación Clínica
+              Equipos por Sector / Servicio
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-            Distribución patrimonial por área médica para garantizar stock de seguridad y custodia de activos.
+            Cantidad y ubicación de equipos asignados a cada área médica.
           </p>
         </div>
 
@@ -39,7 +39,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
           <div className="relative">
             <input
               type="text"
-              placeholder="Filtrar servicio o piso..."
+              placeholder="Buscar sector (ej. UTI, Quirófano)..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
               className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cpvs-blue/20 focus:border-cpvs-blue focus:bg-white transition-all w-48 sm:w-56"
@@ -47,7 +47,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
           </div>
           <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200/60 whitespace-nowrap">
-            {services.length} Servicios
+            {services.length} Sectores
           </span>
         </div>
       </div>
@@ -56,7 +56,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
       <div className="divide-y divide-slate-100">
         {filteredServices.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">
-            No se encontraron servicios clínicos con el término ingresado.
+            No se encontraron sectores clínicos con el término ingresado.
           </div>
         ) : (
           filteredServices.map((svc) => {
@@ -97,9 +97,9 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
                 {/* Columna 2: Barra Proporcional de Disponibilidad */}
                 <div className="flex-1 max-w-xs space-y-1">
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-500 font-medium">Disponibilidad del Servicio</span>
+                    <span className="text-slate-500 font-medium">Disponibilidad</span>
                     <span className="font-mono font-bold text-slate-700">
-                      {hayEquipos ? `${ratioLibres}%` : 'Sin dotación'}
+                      {hayEquipos ? `${ratioLibres}% libre` : 'Sin equipos'}
                     </span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
@@ -118,7 +118,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
                 {/* Columna 3: Conteo Desglosado */}
                 <div className="flex items-center gap-4 text-xs font-mono">
                   <div className="text-left min-w-[70px]">
-                    <span className="text-[10px] text-slate-400 block font-sans">Dotación</span>
+                    <span className="text-[10px] text-slate-400 block font-sans">Total</span>
                     <span className="text-base font-bold text-slate-900">{total}</span>
                   </div>
 
@@ -150,7 +150,7 @@ export const ServiceStockBreakdownView: React.FC<ServiceStockBreakdownProps> = (
                     </button>
                   ) : (
                     <span className="text-[11px] text-slate-400 font-medium">
-                      Vacante
+                      Sin equipos
                     </span>
                   )}
                 </div>
