@@ -9,6 +9,7 @@ interface LoanModalProps {
   equipmentList: Equipment[];
   locationList: Location[];
   preselectedEquipment?: Equipment | null;
+  preselectedLocationId?: number | null;
   onSuccess: (message: string) => void;
 }
 
@@ -24,6 +25,7 @@ export const LoanModal: React.FC<LoanModalProps> = ({
   equipmentList,
   locationList,
   preselectedEquipment,
+  preselectedLocationId,
   onSuccess
 }) => {
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<number | null>(null);
@@ -43,14 +45,18 @@ export const LoanModal: React.FC<LoanModalProps> = ({
       } else {
         setSelectedEquipmentId(null);
       }
-      setSelectedLocationId(null);
+      if (preselectedLocationId) {
+        setSelectedLocationId(preselectedLocationId);
+      } else {
+        setSelectedLocationId(null);
+      }
       setEquipmentSearch('');
       setLocationSearch('');
       setSelectedFloorFilter('ALL');
       setObservaciones('');
       setError(null);
     }
-  }, [isOpen, preselectedEquipment]);
+  }, [isOpen, preselectedEquipment, preselectedLocationId]);
 
   // Manejar tecla ESC para cerrar
   useEffect(() => {

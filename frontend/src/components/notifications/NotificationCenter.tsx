@@ -161,7 +161,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 <div className="pl-7 pt-1 flex items-center justify-between text-xs">
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-cpvs-blue hover:text-blue-700">
                     <span>
-                      {notif.actionType === 'OPEN_RETURN' ? 'Proceder a Reingreso Sanitario LT8' :
+                      {notif.actionType === 'OPEN_RETURN' ? 'Proceder a Reingreso' :
                        notif.actionType === 'OPEN_LOAN' ? 'Asignar Equipo para Cubrir Guardia' :
                        notif.actionType === 'VIEW_EQUIPMENT' ? 'Ver Ficha del Equipo' :
                        'Ir a Traslados'}

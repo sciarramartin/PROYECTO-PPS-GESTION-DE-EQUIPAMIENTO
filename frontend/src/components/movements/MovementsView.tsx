@@ -260,7 +260,7 @@ export const MovementsView: React.FC<MovementsViewProps> = ({
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-cpvs-blue hover:bg-blue-700 shadow-2xs transition-all active:scale-95 cursor-pointer"
                           >
                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                            <span>Reingreso (LT8)</span>
+                            <span>Reingreso</span>
                           </button>
                         </td>
                       </tr>

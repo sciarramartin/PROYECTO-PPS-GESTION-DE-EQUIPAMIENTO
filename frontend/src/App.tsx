@@ -30,6 +30,7 @@ export const App: React.FC = () => {
   // Modales de Acción (US-05, US-07, US-03)
   const [isLoanModalOpen, setIsLoanModalOpen] = useState<boolean>(false);
   const [loanPreselectedEquipment, setLoanPreselectedEquipment] = useState<Equipment | null>(null);
+  const [loanPreselectedLocationId, setLoanPreselectedLocationId] = useState<number | null>(null);
 
   const [isReturnModalOpen, setIsReturnModalOpen] = useState<boolean>(false);
   const [returnEquipment, setReturnEquipment] = useState<Equipment | null>(null);
@@ -237,8 +238,9 @@ export const App: React.FC = () => {
   };
 
   // Handlers para abrir modales
-  const handleOpenLoan = (eq?: Equipment) => {
+  const handleOpenLoan = (eq?: Equipment, locationId?: number) => {
     setLoanPreselectedEquipment(eq || null);
+    setLoanPreselectedLocationId(locationId || null);
     setIsLoanModalOpen(true);
   };
 
@@ -298,10 +300,10 @@ export const App: React.FC = () => {
             <button
               onClick={() => handleOpenLoan()}
               className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-cpvs-blue via-blue-600 to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
-              title="Asignar y trasladar equipo a una habitación"
+              title="Asignar y trasladar equipo a una habitación o cama"
             >
               <Zap className="w-4 h-4 text-amber-300" />
-              <span>+ Asignar a Sala</span>
+              <span>+ Asignar equipo a sala</span>
             </button>
 
             {/* Sincronización */}
@@ -373,7 +375,16 @@ export const App: React.FC = () => {
         {/* Vista: Ubicaciones Unificadas (US-04) */}
         {activeTab === 'ubicaciones' && (
           <div className="space-y-4">
-            <LocationList locations={locations} />
+            <LocationList 
+              locations={locations} 
+              onSelectLocation={(loc) => {
+                setSearchQuery(loc.nombre);
+                setActiveTab('equipos');
+              }}
+              onAssignToLocation={(loc) => {
+                handleOpenLoan(undefined, loc.id_ubicacion);
+              }}
+            />
           </div>
         )}
       </main>
@@ -423,10 +434,15 @@ export const App: React.FC = () => {
       {/* Modales de Flujos Operativos */}
       <LoanModal
         isOpen={isLoanModalOpen}
-        onClose={() => setIsLoanModalOpen(false)}
+        onClose={() => {
+          setIsLoanModalOpen(false);
+          setLoanPreselectedEquipment(null);
+          setLoanPreselectedLocationId(null);
+        }}
         equipmentList={equipment}
         locationList={locations}
         preselectedEquipment={loanPreselectedEquipment}
+        preselectedLocationId={loanPreselectedLocationId}
         onSuccess={handleMovementSuccess}
       />
 

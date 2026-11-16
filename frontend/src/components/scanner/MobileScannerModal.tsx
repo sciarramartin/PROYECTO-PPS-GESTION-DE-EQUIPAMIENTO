@@ -287,7 +287,7 @@ export const MobileScannerModal: React.FC<MobileScannerModalProps> = ({
               className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
             >
               <Zap className="w-4 h-4 text-amber-300" />
-              <span>Continuar con: Asignar a Habitación</span>
+              <span>Continuar con: Asignar equipo a sala</span>
             </button>
           )}
 
@@ -297,7 +297,7 @@ export const MobileScannerModal: React.FC<MobileScannerModalProps> = ({
               className="w-full py-3 px-4 bg-cpvs-blue hover:bg-blue-600 active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
             >
               <ShieldCheck className="w-4 h-4 text-emerald-300" />
-              <span>Continuar con: Reingreso Sanitario LT8 (5 min)</span>
+              <span>Continuar con: Reingreso</span>
             </button>
           )}
 

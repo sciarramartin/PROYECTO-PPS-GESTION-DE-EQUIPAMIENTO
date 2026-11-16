@@ -175,6 +175,15 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({
       {/* Estilos específicos de impresión */}
       <style>{`
         @media print {
+          @page {
+            margin: 5mm;
+            size: A4 portrait;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
           body * {
             visibility: hidden !important;
           }
@@ -187,16 +196,28 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({
             top: 0 !important;
             width: 100% !important;
             margin: 0 !important;
-            padding: 4mm !important;
+            padding: 0 !important;
             background: white !important;
-            display: block !important;
+            display: grid !important;
+            grid-template-columns: ${labelsWithQR.length === 1 ? '100mm' : labelSize === 'compact' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)'} !important;
+            gap: 3.5mm !important;
           }
           .no-print {
             display: none !important;
           }
-          @page {
-            margin: 4mm;
-            size: auto;
+          .label-print-card {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            box-sizing: border-box !important;
+            border: 1.5px solid #000000 !important;
+            border-radius: 6px !important;
+            padding: 3mm !important;
+            height: ${labelSize === 'compact' ? '40mm' : '52mm'} !important;
+            max-height: ${labelSize === 'compact' ? '40mm' : '52mm'} !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            background-color: #ffffff !important;
           }
         }
       `}</style>
@@ -313,7 +334,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-black shadow-md hover:shadow-lg disabled:opacity-50 transition-all cursor-pointer active:scale-95"
             >
               <Printer className="w-4 h-4 text-cpvs-cyan" />
-              <span>Imprimir {targetEquipmentList.length} {targetEquipmentList.length === 1 ? 'Etiqueta' : 'Etiquetas'}</span>
+              <span>Imprimir</span>
             </button>
           </div>
 
@@ -486,66 +507,65 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({
                 {labelsWithQR.map((item) => (
                   <div
                     key={item.id_equipo}
-                    className="bg-white border-2 border-black rounded-xl p-3.5 shadow-sm relative overflow-hidden flex flex-col justify-between break-inside-avoid print:shadow-none print:border-2 print:border-black"
-                    style={{ minHeight: labelSize === 'standard' ? '150px' : '125px' }}
+                    className="label-print-card bg-white border-2 border-black rounded-xl p-3 shadow-sm relative overflow-hidden flex flex-col justify-between break-inside-avoid print:shadow-none print:border-2 print:border-black"
                   >
-                    {/* 1. Header Oficial CPVS (Limpio y Oficial) */}
-                    <div className="flex items-center justify-between border-b-2 border-black pb-1.5 mb-2">
+                    {/* 1. Header Oficial CPVS */}
+                    <div className="flex items-center justify-between border-b-2 border-black pb-1 mb-1.5">
                       <div className="flex items-center gap-1.5">
                         <img 
                           src="/logo-cpvs.png" 
                           alt="CPVS" 
-                          className="h-4 object-contain brightness-0"
+                          className="h-3.5 object-contain brightness-0"
                           onError={(e) => {
                             (e.target as HTMLElement).style.display = 'none';
                           }}
                         />
-                        <span className="text-[11px] font-black uppercase tracking-wider text-black">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-black">
                           CLÍNICA VÉLEZ SARSFIELD
                         </span>
                       </div>
-                      <span className="text-[9px] font-mono font-bold tracking-widest text-black border border-black px-1.5 py-0.2 rounded">
+                      <span className="text-[8px] font-mono font-bold tracking-widest text-black border border-black px-1.5 py-0.2 rounded">
                         GESTIÓN Y TRAZABILIDAD
                       </span>
                     </div>
 
-                    {/* 2. Cuerpo Primordial: NÚMERO GIGANTE + QR GRANDE */}
-                    <div className="flex items-center justify-between gap-4 flex-1">
-                      {/* Número Gigante */}
+                    {/* 2. Cuerpo Primordial: NÚMERO DE ALTO CONTRASTE + QR */}
+                    <div className="flex items-center justify-between gap-3 flex-1">
+                      {/* Número Físico con Tinta Negra Pura de Alto Contraste (Cero lavado en impresión) */}
                       <div className="flex flex-col items-start justify-center">
-                        <span className="text-[9px] font-bold text-slate-600 uppercase tracking-wider">
+                        <span className="text-[8.5px] font-bold text-slate-700 uppercase tracking-wider">
                           N° DE EQUIPO
                         </span>
-                        <div className="px-3.5 py-1 rounded-xl bg-black text-white font-mono font-black text-4xl sm:text-5xl tracking-tight leading-none my-1 shadow-xs print:bg-black print:text-white">
+                        <div className="px-2.5 py-0.5 rounded-lg border-2 border-black bg-slate-100 text-black font-mono font-black text-3xl sm:text-4xl tracking-tight leading-none my-1 print:bg-white print:text-black print:border-2 print:border-black">
                           {item.numero_sticker || '—'}
                         </div>
-                        <span className="text-[10px] font-mono text-black font-bold">
+                        <span className="text-[9.5px] font-mono text-black font-bold">
                           SN: {item.numero_serie}
                         </span>
                       </div>
 
-                      {/* QR Grande de Alta Densidad */}
+                      {/* QR Vectorial Proporcionado */}
                       <div className="flex flex-col items-center justify-center shrink-0">
                         {item.qrDataUrl ? (
                           <img 
                             src={item.qrDataUrl} 
                             alt={`QR ${item.codigo_qr}`} 
-                            className="w-24 h-24 object-contain border border-black rounded p-0.5 bg-white print:w-24 print:h-24"
+                            className="w-20 h-20 object-contain border border-black rounded p-0.5 bg-white print:w-20 print:h-20"
                           />
                         ) : (
-                          <div className="w-24 h-24 bg-slate-100 flex items-center justify-center text-xs text-slate-400">
+                          <div className="w-20 h-20 bg-slate-100 flex items-center justify-center text-xs text-slate-400">
                             QR
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* 3. Pie Técnico Compacto (Sin micro-textos) */}
-                    <div className="border-t border-slate-300 pt-1.5 mt-2 flex items-center justify-between text-[10px] text-black font-medium">
-                      <span className="font-bold truncate max-w-[180px]">
+                    {/* 3. Pie Técnico Compacto */}
+                    <div className="border-t border-slate-300 pt-1 mt-1.5 flex items-center justify-between text-[9px] text-black font-medium">
+                      <span className="font-bold truncate max-w-[160px]">
                         {item.nombre_articulo}
                       </span>
-                      <span className="text-slate-600 truncate max-w-[130px] text-right font-medium">
+                      <span className="text-slate-800 truncate max-w-[120px] text-right font-semibold">
                         {item.nombre_servicio_propietario}
                       </span>
                     </div>

@@ -179,7 +179,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               title="Generar e imprimir etiquetas físicas para los equipos filtrados"
             >
               <Printer className="w-3.5 h-3.5 text-slate-500" />
-              <span>Imprimir Lote ({filteredEquipment.length})</span>
+              <span>Imprimir</span>
             </button>
 
             <button
@@ -187,7 +187,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cpvs-blue to-cpvs-cyan hover:from-blue-700 hover:to-teal-600 shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-amber-300" />
-              <span>+ Asignar a Sala</span>
+              <span>+ Asignar equipo a sala</span>
             </button>
           </div>
         </div>
@@ -556,10 +556,10 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({
                       <button
                         onClick={() => onOpenReturnModal?.(item)}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-cpvs-blue hover:bg-cpvs-blue hover:text-white font-bold text-[11px] border border-blue-200/80 transition-all cursor-pointer shadow-2xs active:scale-95"
-                        title="Reingresar equipo con certificación de bioseguridad LT8"
+                        title="Reingreso del equipo al servicio base"
                       >
                         <ShieldCheck className="w-3 h-3" />
-                        <span>Reingreso LT8</span>
+                        <span>Reingreso</span>
                       </button>
                     )}
 
