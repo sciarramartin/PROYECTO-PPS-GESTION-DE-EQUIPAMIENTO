@@ -128,3 +128,22 @@ export interface CreateReturnDTO {
   usuario_id?: number;
   observaciones?: string;
 }
+
+export type NotificationType = 'WARNING' | 'ALERT' | 'INFO' | 'SUCCESS';
+export type NotificationActionType = 'NAVIGATE_TAB' | 'OPEN_RETURN' | 'OPEN_LOAN' | 'VIEW_EQUIPMENT';
+
+export interface AppNotification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  actionType: NotificationActionType;
+  actionPayload?: {
+    tab?: 'dashboard' | 'equipos' | 'traslados' | 'ubicaciones';
+    equipmentId?: number;
+    equipmentCode?: string;
+    locationName?: string;
+  };
+}

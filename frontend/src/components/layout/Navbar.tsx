@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, User, Search, Building2, Monitor, ArrowLeftRight } from 'lucide-react';
+import { Activity, User, Search, Building2, Monitor, ArrowLeftRight, Bell } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: 'dashboard' | 'equipos' | 'traslados' | 'ubicaciones';
@@ -7,6 +7,8 @@ interface NavbarProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   onSearchSubmit: () => void;
+  onOpenNotifications?: () => void;
+  unreadNotificationsCount?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -14,7 +16,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   searchQuery,
   setSearchQuery,
-  onSearchSubmit
+  onSearchSubmit,
+  onOpenNotifications,
+  unreadNotificationsCount = 0
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -29,15 +33,33 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* ======================================================== */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
         {/* Barra Superior con Sesión de Usuario (Color Oficial #07599b) */}
-        <div className="bg-cpvs-blue text-white text-xs px-3 sm:px-8 py-1 flex justify-between sm:justify-end items-center">
+        <div className="bg-cpvs-blue text-white text-xs px-3 sm:px-8 py-1 flex justify-between sm:justify-end items-center gap-3">
           <span className="text-[10px] text-blue-100 sm:hidden font-medium">Clínica Privada Vélez Sarsfield</span>
-          <div className="flex items-center space-x-1.5 bg-white/10 px-2 py-0.5 rounded text-[11px]">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
-            <User className="w-3.5 h-3.5 text-blue-200" />
-            <span className="font-semibold text-white tracking-wide">
-              Alejandra
-            </span>
-            <span className="text-blue-200 text-[10px] hidden sm:inline">(Admin / Guardia 24/7)</span>
+          <div className="flex items-center gap-2">
+            {/* Botón Campana de Alertas y Notificaciones Push */}
+            <button
+              type="button"
+              onClick={onOpenNotifications}
+              className="relative p-1 px-2 rounded-md bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5 text-[11px] font-semibold cursor-pointer active:scale-95"
+              title="Centro de Alertas de Guardia y Stock"
+            >
+              <Bell className="w-3.5 h-3.5 text-amber-300" />
+              <span className="hidden xs:inline">Alertas</span>
+              {unreadNotificationsCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-mono font-bold text-[9px] shadow-2xs">
+                  {unreadNotificationsCount}
+                </span>
+              )}
+            </button>
+
+            <div className="flex items-center space-x-1.5 bg-white/10 px-2 py-0.5 rounded text-[11px]">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+              <User className="w-3.5 h-3.5 text-blue-200" />
+              <span className="font-semibold text-white tracking-wide">
+                Alejandra
+              </span>
+              <span className="text-blue-200 text-[10px] hidden sm:inline">(Admin / Guardia 24/7)</span>
+            </div>
           </div>
         </div>
 

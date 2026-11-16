@@ -9,10 +9,13 @@ import { Footer } from './components/layout/Footer';
 import { LoanModal } from './components/movements/LoanModal';
 import { ReturnModal } from './components/movements/ReturnModal';
 import { LabelPrintModal } from './components/equipment/LabelPrintModal';
+import { MobileScannerModal } from './components/scanner/MobileScannerModal';
+import { PushNotificationBanner } from './components/notifications/PushNotificationBanner';
+import { NotificationCenter } from './components/notifications/NotificationCenter';
 import { Toast, ToastMessage } from './components/common/Toast';
 import { api } from './services/api';
-import { DashboardSummary, Equipment, Location } from './types';
-import { RefreshCw, AlertCircle, Zap } from 'lucide-react';
+import { DashboardSummary, Equipment, Location, AppNotification } from './types';
+import { RefreshCw, AlertCircle, Zap, Camera } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'equipos' | 'traslados' | 'ubicaciones'>('dashboard');
@@ -34,6 +37,149 @@ export const App: React.FC = () => {
   const [isLabelModalOpen, setIsLabelModalOpen] = useState<boolean>(false);
   const [labelEquipment, setLabelEquipment] = useState<Equipment | null>(null);
   const [labelBatchEquipment, setLabelBatchEquipment] = useState<Equipment[]>([]);
+
+  // Escáner Móvil por Cámara (FAB)
+  const [isMobileScannerOpen, setIsMobileScannerOpen] = useState<boolean>(false);
+
+  // Centro de Notificaciones Hospitalarias Push (Android / iPhone)
+  const [isNotificationCenterOpen, setIsNotificationCenterOpen] = useState<boolean>(false);
+  const [bannerNotification, setBannerNotification] = useState<AppNotification | null>(null);
+  const [permissionStatus, setPermissionStatus] = useState<NotificationPermission | 'unsupported'>('default');
+
+  const [notifications, setNotifications] = useState<AppNotification[]>([
+    {
+      id: 'notif-1',
+      type: 'WARNING',
+      title: 'Bomba #09 superó 17 hs en Habitación',
+      message: 'Conectada a paciente en Piso 1 - Hab. 101 Cama A. Tocar para reingresar o certificar protocolo LT8.',
+      timestamp: 'Hace 10 min',
+      read: false,
+      actionType: 'OPEN_RETURN',
+      actionPayload: { equipmentId: 9, equipmentCode: '9' }
+    },
+    {
+      id: 'notif-2',
+      type: 'ALERT',
+      title: 'Stock Crítico en UTI Adultos',
+      message: 'Solo quedan 2 bombas de infusión libres en depósito. Se sugiere traslado preventivo.',
+      timestamp: 'Hace 45 min',
+      read: false,
+      actionType: 'OPEN_LOAN',
+      actionPayload: { tab: 'dashboard' }
+    },
+    {
+      id: 'notif-3',
+      type: 'INFO',
+      title: 'Equipo en Service: Respirador R-05',
+      message: 'Ingresó a Taller / Mantenimiento hace 5 días. Requiere calibración de volumen.',
+      timestamp: 'Hace 2 horas',
+      read: true,
+      actionType: 'VIEW_EQUIPMENT',
+      actionPayload: { tab: 'equipos', equipmentCode: 'R-05' }
+    }
+  ]);
+
+  // Verificar soporte y estado de notificaciones Push del navegador
+  useEffect(() => {
+    if ('Notification' in window) {
+      setPermissionStatus(Notification.permission);
+    } else {
+      setPermissionStatus('unsupported');
+    }
+  }, []);
+
+  const requestPushPermission = async () => {
+    if ('Notification' in window) {
+      try {
+        const result = await Notification.requestPermission();
+        setPermissionStatus(result);
+        if (result === 'granted') {
+          showToast('success', 'Notificaciones Habilitadas', 'Recibirás avisos de guardia y stock crítico directamente en tu dispositivo.');
+          // Disparar notificación nativa de bienvenida
+          try {
+            new Notification('Clínica Vélez Sarsfield • Guardia 24/7', {
+              body: 'Trazabilidad biomédica activa en tu móvil. Se notificarán movimientos y stock.',
+              icon: '/logo-cpvs.png'
+            });
+          } catch {}
+        }
+      } catch (e) {
+        console.error('Error solicitando permisos push:', e);
+      }
+    }
+  };
+
+  const simulateGuardAlert = () => {
+    const newNotif: AppNotification = {
+      id: `alert-${Date.now()}`,
+      type: 'WARNING',
+      title: 'Alerta de Guardia: Bomba #10 superó 24 hs',
+      message: 'Equipo operando en Piso 1 - Hab. 101 Cama B desde ayer. Tocar para proceder al reingreso sanitario LT8.',
+      timestamp: 'Ahora',
+      read: false,
+      actionType: 'OPEN_RETURN',
+      actionPayload: { equipmentId: 10, equipmentCode: '10' }
+    };
+
+    setNotifications(prev => [newNotif, ...prev]);
+    setBannerNotification(newNotif);
+
+    // Intentar también notificación nativa del OS en Android / iOS si hay permiso
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification(newNotif.title, {
+          body: newNotif.message,
+          icon: '/logo-cpvs.png'
+        });
+      } catch {}
+    }
+  };
+
+  const handleNotificationAction = (notif: AppNotification) => {
+    // Marcar como leída
+    setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+    setBannerNotification(null);
+    setIsNotificationCenterOpen(false);
+
+    // Despachar acción al módulo correspondiente
+    if (notif.actionType === 'OPEN_RETURN') {
+      const eq = equipment.find(e => 
+        e.id_equipo === notif.actionPayload?.equipmentId || 
+        e.numero_sticker === notif.actionPayload?.equipmentCode
+      );
+      if (eq) {
+        handleOpenReturn(eq);
+      } else {
+        setActiveTab('traslados');
+      }
+    } else if (notif.actionType === 'OPEN_LOAN') {
+      handleOpenLoan();
+    } else if (notif.actionType === 'VIEW_EQUIPMENT') {
+      setActiveTab('equipos');
+      if (notif.actionPayload?.equipmentCode) {
+        setSearchQuery(notif.actionPayload.equipmentCode);
+      }
+    } else if (notif.actionType === 'NAVIGATE_TAB') {
+      setActiveTab(notif.actionPayload?.tab || 'traslados');
+    }
+  };
+
+  const markAllNotificationsAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const handleEquipmentDetected = (detected: Equipment) => {
+    setIsMobileScannerOpen(false);
+    if (detected.estado_operativo === 'DISPONIBLE') {
+      handleOpenLoan(detected);
+    } else if (detected.estado_operativo === 'EN_USO') {
+      handleOpenReturn(detected);
+    } else {
+      setActiveTab('equipos');
+      setSearchQuery(detected.numero_serie);
+      showToast('info', 'Equipo en Mantenimiento', `${detected.nombre_articulo} (${detected.numero_serie}) se encuentra actualmente en Taller.`);
+    }
+  };
 
   // Sistema de Notificaciones Toast (Heurística 1 de Nielsen)
   const [toast, setToast] = useState<ToastMessage | null>(null);
@@ -121,6 +267,8 @@ export const App: React.FC = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onSearchSubmit={handleSearchSubmit}
+        onOpenNotifications={() => setIsNotificationCenterOpen(true)}
+        unreadNotificationsCount={notifications.filter(n => !n.read).length}
       />
 
       {/* Contenido Principal */}
@@ -233,17 +381,44 @@ export const App: React.FC = () => {
       {/* Footer Oficial */}
       <Footer />
 
-      {/* BOTÓN FLOTANTE (FAB) PARA MÓVIL (F12) */}
+      {/* BOTÓN FLOTANTE (FAB) PARA MÓVIL: ESCÁNER CON CÁMARA */}
       <div className="md:hidden fixed bottom-16 right-4 z-40">
         <button
-          onClick={() => handleOpenLoan()}
-          className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-cpvs-blue to-cpvs-cyan text-white font-bold text-xs rounded-full shadow-2xl active:scale-90 transition-all border-2 border-white cursor-pointer"
-          title="Asignar equipo a sala"
+          onClick={() => setIsMobileScannerOpen(true)}
+          className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-cpvs-blue via-blue-600 to-cpvs-cyan text-white font-bold text-xs rounded-full shadow-2xl active:scale-90 transition-all border-2 border-white cursor-pointer ring-4 ring-cpvs-blue/20"
+          title="Escanear sticker o código con la cámara del celular"
         >
-          <Zap className="w-4 h-4 text-amber-300" />
-          <span>Asignar a Sala</span>
+          <Camera className="w-4 h-4 text-amber-300 animate-pulse" />
+          <span>Escanear con Cámara</span>
         </button>
       </div>
+
+      {/* Escáner Móvil de Cámara (Cámara Trasera + Retícula Láser) */}
+      <MobileScannerModal
+        isOpen={isMobileScannerOpen}
+        onClose={() => setIsMobileScannerOpen(false)}
+        equipmentList={equipment}
+        onEquipmentDetected={handleEquipmentDetected}
+      />
+
+      {/* Banner Emergente Tipo Push (Android / iOS) */}
+      <PushNotificationBanner
+        notification={bannerNotification}
+        onDismiss={() => setBannerNotification(null)}
+        onAction={handleNotificationAction}
+      />
+
+      {/* Centro de Notificaciones Hospitalarias (Alertas 24/7 y Stock Crítico) */}
+      <NotificationCenter
+        isOpen={isNotificationCenterOpen}
+        onClose={() => setIsNotificationCenterOpen(false)}
+        notifications={notifications}
+        onNotificationClick={handleNotificationAction}
+        onMarkAllAsRead={markAllNotificationsAsRead}
+        onRequestPushPermission={requestPushPermission}
+        onSimulateNotification={simulateGuardAlert}
+        permissionStatus={permissionStatus}
+      />
 
       {/* Modales de Flujos Operativos */}
       <LoanModal
