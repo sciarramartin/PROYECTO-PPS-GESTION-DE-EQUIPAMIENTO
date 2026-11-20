@@ -391,7 +391,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({
                   >
                     Desmarcar Todos
                   </button>
-                  <span className="text-slate-400 font-mono text-[11px]">
+                  <span className="text-slate-400 font-mono text-[11px] whitespace-nowrap">
                     ({selectedEquipmentIds.size} de {fullList.length} seleccionados)
                   </span>
                 </div>

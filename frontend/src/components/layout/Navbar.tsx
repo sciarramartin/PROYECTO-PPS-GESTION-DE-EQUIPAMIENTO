@@ -33,9 +33,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* ======================================================== */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
         {/* Barra Superior con Sesión de Usuario (Color Oficial #07599b) */}
-        <div className="bg-cpvs-blue text-white text-xs px-3 sm:px-8 py-1 flex justify-between sm:justify-end items-center gap-3">
-          <span className="text-[10px] text-blue-100 sm:hidden font-medium">Clínica Privada Vélez Sarsfield</span>
-          <div className="flex items-center gap-2">
+        <div className="bg-cpvs-blue text-white text-xs px-3 sm:px-8 py-1 flex justify-between sm:justify-end items-center gap-3 overflow-hidden">
+          <span className="text-[10px] text-blue-100 sm:hidden font-medium truncate">Clínica Privada Vélez Sarsfield</span>
+          <div className="flex items-center gap-2 shrink-0">
             {/* Botón Campana de Alertas y Notificaciones Push */}
             <button
               type="button"
@@ -65,32 +65,32 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Barra Principal */}
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 gap-3">
+          <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
             {/* Logotipo Oficial */}
             <div 
-              className="flex items-center gap-2 sm:gap-3 cursor-pointer select-none" 
+              className="flex items-center gap-2 sm:gap-3 cursor-pointer select-none shrink-0" 
               onClick={() => setActiveTab('dashboard')}
             >
               <img 
                 src="/logo-cpvs.png" 
                 alt="CPVS" 
-                className="h-7 sm:h-9 w-auto object-contain"
+                className="h-7 sm:h-9 w-auto object-contain shrink-0"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <div className="border-l border-slate-200 pl-2 sm:pl-3">
-                <h1 className="text-xs sm:text-sm font-bold text-cpvs-blue leading-tight uppercase tracking-tight">
+              <div className="border-l border-slate-200 pl-2 sm:pl-3 flex flex-col justify-center">
+                <h1 className="text-xs sm:text-sm font-bold text-cpvs-blue leading-tight uppercase tracking-tight whitespace-nowrap">
                   Trazabilidad Biomédica
                 </h1>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium hidden sm:block">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium hidden lg:block whitespace-nowrap">
                   Gestión y Bioseguridad de Equipos
                 </p>
               </div>
             </div>
 
             {/* Buscador Rápido Desktop (US-06) */}
-            <div className="flex-1 max-w-md hidden md:block">
+            <div className="flex-1 max-w-xs xl:max-w-md hidden md:block min-w-0 mx-2 lg:mx-4">
               <div className="relative">
                 <input
                   type="text"
@@ -119,52 +119,52 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Navegación por Pestañas Desktop (Segmented Control moderno) */}
-            <nav className="hidden md:flex bg-slate-100/90 p-1 rounded-xl items-center gap-1 border border-slate-200/80 shadow-2xs">
+            <nav className="hidden md:flex bg-slate-100/90 p-1 rounded-xl items-center gap-1 border border-slate-200/80 shadow-2xs shrink-0">
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 lg:px-3 py-1.5 rounded-lg text-xs lg:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeTab === 'dashboard'
                     ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
                 }`}
               >
-                <Activity className="w-4 h-4 text-cpvs-blue" />
+                <Activity className="w-4 h-4 text-cpvs-blue shrink-0" />
                 <span>Tablero</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('equipos')}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 lg:px-3 py-1.5 rounded-lg text-xs lg:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeTab === 'equipos'
                     ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
                 }`}
               >
-                <Monitor className="w-4 h-4 text-cpvs-blue" />
+                <Monitor className="w-4 h-4 text-cpvs-blue shrink-0" />
                 <span>Inventario</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('traslados')}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 lg:px-3 py-1.5 rounded-lg text-xs lg:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeTab === 'traslados'
                     ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
                 }`}
               >
-                <ArrowLeftRight className="w-4 h-4 text-cpvs-blue" />
+                <ArrowLeftRight className="w-4 h-4 text-cpvs-blue shrink-0" />
                 <span>Traslados</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('ubicaciones')}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 lg:px-3 py-1.5 rounded-lg text-xs lg:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeTab === 'ubicaciones'
                     ? 'bg-white text-cpvs-blue shadow-xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
                 }`}
               >
-                <Building2 className="w-4 h-4 text-cpvs-blue" />
+                <Building2 className="w-4 h-4 text-cpvs-blue shrink-0" />
                 <span>Sectores</span>
               </button>
             </nav>
